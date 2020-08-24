@@ -5,8 +5,6 @@ gensim
 sentencepiece
 tfds-nightly
 transformers
-torch
-tensorflow
 jupyterlab
 flask
 flask_bootstrap
