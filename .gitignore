@@ -1,2 +1,4 @@
 *__pycache__*
 *.idea*
+*.pem
+*.DS_Store*

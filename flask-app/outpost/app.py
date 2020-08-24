@@ -19,6 +19,8 @@ def analyze():
     if request.method == 'POST':
         rawtext = request.form['rawtext']
 
+        # TODO check that num sentences is less than the total number of sentences
+
         tfidf_summary = run_tf_idf_summarization(rawtext, num_sentences=int(request.form['num_summary_sentences']))
 
         word_frequency_summary = run_word_frequency_summarization(rawtext, num_sentences=int(request.form['num_summary_sentences']))
