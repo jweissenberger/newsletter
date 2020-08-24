@@ -8,9 +8,10 @@ COPY requirements.txt requirements.txt
 COPY outpost /opt/
 COPY nltk_download.py nltk_download.py
 
-RUN python3 nltk_download.py
 
 RUN pip3 install -r requirements.txt
+RUN python3 nltk_download.py
+
 WORKDIR /opt/
 
 # TODO Workers should be equal to the number of cores
