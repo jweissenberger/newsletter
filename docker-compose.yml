@@ -7,3 +7,11 @@ services:
     ports:
       - "8000:8000"
     network_mode: host
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    environment:
+      - SERVER_NAME=${IP}
+    restart: always
+    network_mode: host
