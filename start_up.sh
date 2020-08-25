@@ -8,6 +8,4 @@ git clone https://github.com/jweissenberger/outpost-api.git
 
 cd outpost-api
 
-sudo docker-compose build
-
-sudo docker-compose up
+sudo docker-compose up --build -d

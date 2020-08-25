@@ -34,5 +34,10 @@ def analyze():
                            top_positive=top_positive, top_negative=top_negative)
 
 
+@app.route('/multi_article')
+def multi_article():
+    return render_template('multi_article.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
