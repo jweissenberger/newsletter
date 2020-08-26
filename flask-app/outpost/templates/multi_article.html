@@ -28,23 +28,64 @@
 <br><br>
 
 <div class="container">
-    <form method="POST" action="/analyze" class="form-group">
-        <label style="font-size:20px">Copy and Paste Article Here:</label><br>
-        <textarea name="rawtext" cols="3" rows="3" class="form-control">
-        </textarea>
+    <form method="POST" action="/multi_analyze" class="form-group">
 
-        <label for="num_summary_sentences" style="font-size:15px">Number of Sentences to Extract for Summary:</label><br>
-        <input type="text" id="num_summary_sentences" name="num_summary_sentences"><br>
-        <label for="num_subj_sent_sentences" style="font-size:15px">Number of Sentences to Output for Sentiment and Subjectivity Analysis:</label><br>
-        <input type="text" id="num_subj_sent_sentences" name="num_subj_sent_sentences">
+    <table style="margin-left:auto;margin-right:auto;">
+      <tr>
+        <th colspan="2" style="text-align:center"><p style="font-size:20px">Left Leaning Articles</p></th>
+        <th colspan="2" style="text-align:center"><p style="font-size:20px">Right Leaning Articles</p></th>
+      </tr>
+      <tr>
+        <th style="width:130px"><p style="font-size:15px">News Source</p></th>
+        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article Here</p></th>
+        <th style="width:130px"><p style="font-size:15px">News Source</p></th>
+        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article Here</p></th>
+      </tr>
+      <tr>
+        <td><textarea name="l_source1" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_text1" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_source1" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_text1" cols="3" rows="3" class="form-control"></textarea></td>
+      </tr>
+      <tr>
+        <td><textarea name="l_source2" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_text2" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_source2" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_text2" cols="3" rows="3" class="form-control"></textarea></td>
+      </tr>
+      <tr>
+        <td><textarea name="l_source3" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_text3" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_source3" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_text3" cols="3" rows="3" class="form-control"></textarea></td>
+      </tr>
+      <tr>
+        <td><textarea name="l_source4" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_text4" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_source4" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_text4" cols="3" rows="3" class="form-control"></textarea></td>
+      </tr>
+      <tr>
+        <td><textarea name="l_source5" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_text5" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_source5" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_text5" cols="3" rows="3" class="form-control"></textarea></td>
+      </tr>
+    </table>
+    <br><br>
 
-        <br><br>
+    <label for="num_summary_sentences" style="font-size:15px">Number of Sentences to Extract for Summary:</label><br>
+    <input type="text" id="num_summary_sentences" name="num_summary_sentences"><br>
+    <label for="num_subj_sent_sentences" style="font-size:15px">Number of Sentences to Output for Sentiment and Subjectivity Analysis:</label><br>
+    <input type="text" id="num_subj_sent_sentences" name="num_subj_sent_sentences">
+    <br><br>
 
-        <button type="reset" class="btn btn-outline-success">Clear</button>
+    <button type="submit" class="btn btn-outline-primary">Submit</button>
 
-        <button type="submit" class="btn btn-outline-primary">Submit</button>
 
     </form>
+
+
 </div>
 
 

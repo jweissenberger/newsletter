@@ -1,0 +1,247 @@
+{% extends "bootstrap/base.html" %}
+{% block content %}
+<head>
+    <!-- <title>SpaCify</title> -->
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/custom.css')}}">
+</head>
+<body>
+
+<div class="jumbotron text-center">
+    <div class="container">
+        <h2>The Outpost News Article Analysis Tool v0.0.1</h2>
+    </div>
+
+</div>
+
+
+<div class="topnav">
+  <a href="/">Single Article Analysis</a>
+  <a class="active" href="/multi_article">Multi Article Analysis</a>
+</div>
+
+<br><br>
+
+<div class="container">
+    <form method="POST" action="/multi_analyze" class="form-group">
+
+    <table style="margin-left:auto;margin-right:auto;">
+      <tr>
+        <th colspan="2" style="text-align:center"><p style="font-size:20px">Left Leaning Articles</p></th>
+        <th colspan="2" style="text-align:center"><p style="font-size:20px">Right Leaning Articles</p></th>
+      </tr>
+      <tr>
+        <th style="width:130px"><p style="font-size:15px">News Source</p></th>
+        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article Here</p></th>
+        <th style="width:130px"><p style="font-size:15px">News Source</p></th>
+        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article Here</p></th>
+      </tr>
+      <tr>
+        <td><textarea name="l_source1" cols="3" rows="3" class="form-control">{{l_source1}}</textarea></td>
+        <td><textarea name="l_text1" cols="3" rows="3" class="form-control">{{l_text1}}</textarea></td>
+        <td><textarea name="r_source1" cols="3" rows="3" class="form-control">{{r_source1}}</textarea></td>
+        <td><textarea name="r_text1" cols="3" rows="3" class="form-control">{{r_text1}}</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea name="l_source2" cols="3" rows="3" class="form-control">{{l_source2}}</textarea></td>
+        <td><textarea name="l_text2" cols="3" rows="3" class="form-control">{{l_text2}}</textarea></td>
+        <td><textarea name="r_source2" cols="3" rows="3" class="form-control">{{r_source2}}</textarea></td>
+        <td><textarea name="r_text2" cols="3" rows="3" class="form-control">{{r_text2}}</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea name="l_source3" cols="3" rows="3" class="form-control">{{l_source3}}</textarea></td>
+        <td><textarea name="l_text3" cols="3" rows="3" class="form-control">{{l_text3}}</textarea></td>
+        <td><textarea name="r_source3" cols="3" rows="3" class="form-control">{{r_source3}}</textarea></td>
+        <td><textarea name="r_text3" cols="3" rows="3" class="form-control">{{r_text3}}</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea name="l_source4" cols="3" rows="3" class="form-control">{{l_source4}}</textarea></td>
+        <td><textarea name="l_text4" cols="3" rows="3" class="form-control">{{l_text4}}</textarea></td>
+        <td><textarea name="r_source4" cols="3" rows="3" class="form-control">{{r_source4}}</textarea></td>
+        <td><textarea name="r_text4" cols="3" rows="3" class="form-control">{{r_text4}}</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea name="l_source5" cols="3" rows="3" class="form-control">{{l_source5}}</textarea></td>
+        <td><textarea name="l_text5" cols="3" rows="3" class="form-control">{{l_text5}}</textarea></td>
+        <td><textarea name="r_source5" cols="3" rows="3" class="form-control">{{r_source5}}</textarea></td>
+        <td><textarea name="r_text5" cols="3" rows="3" class="form-control">{{r_text5}}</textarea></td>
+      </tr>
+    </table>
+    <br><br>
+
+    <label for="num_summary_sentences" style="font-size:15px">Number of Sentences to Extract for Summary:</label><br>
+    <input type="text" id="num_summary_sentences" name="num_summary_sentences"><br>
+    <label for="num_subj_sent_sentences" style="font-size:15px">Number of Sentences to Output for Sentiment and Subjectivity Analysis:</label><br>
+    <input type="text" id="num_subj_sent_sentences" name="num_subj_sent_sentences">
+    <br><br>
+
+    <button type="submit" class="btn btn-outline-primary">Submit</button>
+
+
+    </form>
+
+
+</div>
+
+<br><br><br>
+<div class="container">
+    <h1>Results </h1>
+
+    <div id="exTab1" class="container">
+        <ul  class="nav nav-pills">
+
+        </ul>
+
+
+    </div>
+
+
+</div>
+
+
+
+<br><br><br>
+
+<div class="container"><h1>Results </h1>
+
+
+
+<div id="exTab1" class="container">
+<ul  class="nav nav-pills">
+			<li class="active">
+        <a  href="#1a" data-toggle="tab">Tokens</a>
+			</li>
+			<li><a href="#1b" data-toggle="tab">Word Info</a>
+			</li>
+			<li><a href="#2a" data-toggle="tab">Named Entities</a>
+			</li>
+			<li><a href="#3a" data-toggle="tab">POS</a>
+			</li>
+  		<li><a href="#4a" data-toggle="tab">Sentiment</a>
+			</li>
+			<li><a href="#5a" data-toggle="tab">Meaning</a>
+			</li>
+		</ul>
+
+			<div class="tab-content clearfix">
+			  <div class="tab-pane active" id="1a">
+          <h3>Tokens</h3>
+          {% for item in custom_tokens %}
+          <li>{{item}}</li>
+          {% endfor %}
+				</div>
+				<div class="tab-pane" id="1b">
+          <h3>Word Info</h3>
+          <div class="container">
+
+
+                <!-- WORD INFO -->
+              </div>
+				</div>
+				<div class="tab-pane" id="2a">
+          <h3>Named Entities</h3>
+           {% for item in custom_namedentities %}
+          <li><span class="badge badge-success">{{item}}</span></li>
+          {% endfor %}
+				</div>
+        <div class="tab-pane" id="3a">
+          <h3>Parts of Speech</h3>
+            <div class="container">
+           <!-- Parts of Speech Tagging  -->
+          <div class="card-footer text-muted">
+                <table class="table table-striped table-hover table-dark" >
+
+                <thead>
+                  <tr>
+                    <th scope="col">Token</th>
+                    <th scope="col">TAG</th>
+                    <th scope="col">POS</th>
+                    <th scope="col">Dependency</th>
+
+                  </tr>
+                  {% for item in custom_postagging  %}
+                </thead>
+                <tbody>
+                  <tr>
+
+                    <td>{{item[0]}}</td>
+                    <td>{{item[1]}}</td>
+                     <td>{{item[2]}}</td>
+                    <td>{{item[3]}}</td>
+
+                  </tr>
+                   {% endfor %}
+              </tbody></table>
+
+              </div>
+
+     <!-- Parts of Speech Tagging  -->
+      </div>
+				</div>
+          <div class="tab-pane" id="4a">
+          <h3>Sentiment Analysis</h3>
+          	  <div class="card-footer text-muted">
+			  <table class="table table-striped table-hover table-dark" >
+			  <thead>
+			    <tr>
+			      <th scope="col">Sentiment</th>
+			      <th scope="col">Polarity</th>
+			      <th scope="col">Subjectivity</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row">Score:</th>
+			      <td>{{blob_sentiment}}</td>
+			      <td>{{blob_subjectivity}}</td>
+			    </tr>
+			</tbody></table>
+
+			</div>
+
+				</div>
+
+		<div class="tab-pane" id="5a">
+          <h3>Meaning</h3>
+
+             <!-- For loop Previously Here  -->
+      <table class="table table-striped table-hover table-dark" >
+        <thead >
+          <tr>
+            <th scope="col">Token</th>
+            <th scope="col">Meaning</th>
+
+          </tr>
+        </thead>
+         {% for i in custom_tokens%}
+        <tbody>
+          <tr>
+            <td>{{i}}</th>
+            <td><a href="http://www.dictionary.com/browse/{{i}}?s="  target="_blank" type="button" class="btn btn-primary" style="float:right;font-size:9px;color:#fff;">View</a></td>
+
+          </tr>
+      </tbody>{% endfor %}
+    </table>
+
+				</div>
+			</div>
+
+  </div>
+</div>
+
+
+</body>
+{% endblock %}
+{% block styles %}
+{{super()}} <!-- Allows Javascripts and other styles to be inclusive in bootstrap -->
+<!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+{% endblock %}

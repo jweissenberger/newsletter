@@ -10,6 +10,8 @@ from sentiment_analysis import flair_topn_sentiment
 app = Flask(__name__)
 Bootstrap(app)
 
+# TODO make version number defined here maybe so that it can get updated on each of the templates
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -20,6 +22,7 @@ def analyze():
         rawtext = request.form['rawtext']
 
         # TODO check that num sentences is less than the total number of sentences
+        # TODO remove special characters from the text
 
         tfidf_summary = run_tf_idf_summarization(rawtext, num_sentences=int(request.form['num_summary_sentences']))
 
@@ -32,6 +35,26 @@ def analyze():
     return render_template('analyze.html', tfidf_summary=tfidf_summary, word_frequency_summary=word_frequency_summary,
                            most_subjective=most_subjective, least_subjective=least_subjective,
                            top_positive=top_positive, top_negative=top_negative)
+
+
+@app.route('/multi_analyze', methods=['GET', 'POST'])
+def multi_analyze():
+    if request.method == 'POST':
+
+        orig_text = {}
+        for i in range(5):
+            orig_text[f'l_source{i+1}'] = request.form[f'l_source{i+1}']
+            orig_text[f'l_text{i+1}'] = request.form[f'l_text{i+1}']
+            orig_text[f'r_source{i + 1}'] = request.form[f'r_source{i + 1}']
+            orig_text[f'r_text{i + 1}'] = request.form[f'r_text{i + 1}']
+
+
+
+
+
+
+    return render_template('multi_analyze.html', **orig_text)
+
 
 
 @app.route('/multi_article')
