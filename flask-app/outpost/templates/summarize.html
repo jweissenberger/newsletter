@@ -19,22 +19,22 @@
 
 </div>
 
+
 <div class="topnav">
-  <a href="/">Summarizer</a>
-  <a class="active" href="/single">Single Article Analysis</a>
+  <a class="active" href="/">Summarizer</a>
+  <a href="/single">Single Article Analysis</a>
   <a href="/multi_article">Multi Article Analysis</a>
 </div>
 
+<br><br>
+
 <div class="container">
-    <form method="POST" action="/analyze" class="form-group">
-        <label>Copy and Paste Article Here:</label><br>
+    <form method="POST" action="/summarize_result" class="form-group">
+        <br>
+        <h1>Summarizer</h1>
+        <label style="font-size:20px">Copy and Paste Article Here:</label><br>
         <textarea name="rawtext" cols="3" rows="3" class="form-control">
         </textarea>
-
-        <label for="num_summary_sentences">Number of Sentences to Extract for Summary:</label><br>
-        <input type="text" id="num_summary_sentences" name="num_summary_sentences"><br>
-        <label for="num_subj_sent_sentences">Number of Sentences to Output for Sentiment and Subjectivity:</label><br>
-        <input type="text" id="num_subj_sent_sentences" name="num_subj_sent_sentences">
 
         <br><br>
 
@@ -43,44 +43,6 @@
         <button type="submit" class="btn btn-outline-primary">Submit</button>
 
     </form>
-</div>
-
-<div class="container">
-    <hr>
-    <p><b>Extractive Summaries</b></p>
-    <label>TF IDF Summary:</label>
-    <p>{{tfidf_summary}}</p>
-
-    <br>
-    <label>Word Frequency Summary</label>
-    <p>{{word_frequency_summary}}</p>
-
-    <hr>
-    <p><b>Sentiment Analysis</b></p>
-    <label>Most Positive Sentences:</label>
-    {% for i in top_positive %}
-    <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-    {% endfor %}
-    <br>
-    <label>Most Negative Sentences:</label>
-    {% for i in top_negative %}
-    <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-    {% endfor %}
-
-
-    <hr>
-    <p><b>Subjectivity Analysis</b></p>
-    <label>Most Subjective Sentences:</label>
-    {% for i in most_subjective %}
-    <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-    {% endfor %}
-    <br>
-    <label>Least Subjective Sentences:</label>
-    {% for i in least_subjective %}
-    <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-    {% endfor %}
-
-    <br><br><br>
 </div>
 
 

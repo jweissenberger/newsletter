@@ -4,6 +4,7 @@ from flask_bootstrap import Bootstrap
 from statistical_summarize import run_tf_idf_summarization, run_word_frequency_summarization
 from subjectivity_analysis import textblob_topn_subjectivity
 from sentiment_analysis import flair_topn_sentiment
+from hft5_summarizer import chunk_summarize_t5
 
 
 # Initialize App
@@ -21,10 +22,27 @@ def clean_text(text):
     return text
 
 
-
 @app.route('/')
-def index():
-    return render_template('index.html')
+def summarize():
+    return render_template('summarize.html')
+
+@app.route('/summarize_result', methods=['GET', 'POST'])
+def summarize_result():
+    if request.method == 'POST':
+        rawtext = request.form['rawtext']
+        clean = clean_text(rawtext)
+
+        large_summary = chunk_summarize_t5(clean, size='large')
+        small_summary = chunk_summarize_t5(clean, size='small')
+
+    return render_template('summarize_result.html', rawtext=rawtext, large_summary=large_summary,
+                           small_summary=small_summary)
+
+
+@app.route('/single')
+def single():
+    return render_template('single.html')
+
 
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():

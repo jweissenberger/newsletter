@@ -6,11 +6,11 @@ RUN apt-get install gunicorn3 -y
 
 COPY requirements.txt requirements.txt
 COPY outpost /opt/
-COPY nltk_download.py nltk_download.py
+COPY models_download.py models_download.py
 
 
 RUN pip3 install -r requirements.txt
-RUN python3 nltk_download.py
+RUN python3 models_download.py
 
 WORKDIR /opt/
 

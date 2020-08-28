@@ -14,29 +14,24 @@
 
 <div class="jumbotron text-center">
     <div class="container">
-        <h2>The Outpost News Article Analysis Tool v0.0.2</h2>
+        <h2>The Outpost News Article Analysis Tool v0.0.3</h2>
     </div>
 
 </div>
 
-
 <div class="topnav">
-  <a class="active" href="/">Single Article Analysis</a>
+  <a class="active" href="/">Summarizer</a>
+  <a href="/single">Single Article Analysis</a>
   <a href="/multi_article">Multi Article Analysis</a>
 </div>
 
-<br><br>
-
 <div class="container">
-    <form method="POST" action="/analyze" class="form-group">
+    <form method="POST" action="/summarize_result" class="form-group">
+        <br>
+        <h1>Summarizer</h1>
         <label style="font-size:20px">Copy and Paste Article Here:</label><br>
-        <textarea name="rawtext" cols="3" rows="3" class="form-control">
+        <textarea name="rawtext" cols="3" rows="3" class="form-control">{{rawtext}}
         </textarea>
-
-        <label for="num_summary_sentences" style="font-size:15px">Number of Sentences to Extract for Summary:</label><br>
-        <input type="text" id="num_summary_sentences" name="num_summary_sentences"><br>
-        <label for="num_subj_sent_sentences" style="font-size:15px">Number of Sentences to Output for Sentiment and Subjectivity Analysis:</label><br>
-        <input type="text" id="num_subj_sent_sentences" name="num_subj_sent_sentences">
 
         <br><br>
 
@@ -45,6 +40,21 @@
         <button type="submit" class="btn btn-outline-primary">Submit</button>
 
     </form>
+</div>
+
+<div class="container">
+    <hr>
+    <p><b>Summaries</b></p>
+    <p>WARNING: some or all of these summaries might be extractive. I'm working on adding a feature to check for this soon</p>
+    <label>Summary 1:</label>
+    <p>{{large_summary}}</p>
+
+    <br>
+    <label>Summary 2:</label>
+    <p>{{small_summary}}</p>
+
+
+    <br><br><br>
 </div>
 
 
