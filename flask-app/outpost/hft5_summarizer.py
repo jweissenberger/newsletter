@@ -44,6 +44,13 @@ def summarize_t5(text, size='small'):
 
 def chunk_summarize_t5(text, size='small'):
 
+    num_sentences = len(sentence_tokenizer(text))
+    if num_sentences > 40:
+        new_text = run_tf_idf_summarization(text, num_sentences=40)
+
+        text = ''
+        for i in new_text:
+            text += i + ' '
 
     preprocess_text = text.strip().replace("\n", "")
     t5_prepared_Text = "summarize: " + preprocess_text
