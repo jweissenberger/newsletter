@@ -26,6 +26,7 @@ def clean_text(text):
 def summarize():
     return render_template('summarize.html')
 
+
 @app.route('/summarize_result', methods=['GET', 'POST'])
 def summarize_result():
     if request.method == 'POST':
@@ -137,14 +138,11 @@ def multi_analyze():
         right_negative = sorted(right_negative, key=lambda x: x[0])
         right_negative = right_negative[-num_subj_sent_sentences:]
 
-
-
     return render_template('multi_analyze.html', left_positive=left_positive, left_negative=left_negative,
                            right_positive=right_positive, right_negative=right_negative,
                            num_summary_sentences=num_summary_sentences,
                            num_subj_sent_sentences=num_subj_sent_sentences,
                            **orig_text, **individual_article_results)
-
 
 
 @app.route('/multi_article')
