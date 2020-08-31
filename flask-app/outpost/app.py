@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
 from flask_bootstrap import Bootstrap
+import flair
 
 from subjectivity_analysis import textblob_topn_subjectivity
 from sentiment_analysis import flair_topn_sentiment
@@ -75,20 +76,15 @@ def analyze():
     if request.method == 'POST':
         rawtext = request.form['rawtext']
 
-        # TODO check that num sentences is less than the total number of sentences
-
         rawtext = clean_text(rawtext)
 
-        tfidf_summary = run_tf_idf_summarization(rawtext, num_sentences=int(request.form['num_summary_sentences']))
-
-        word_frequency_summary = run_word_frequency_summarization(rawtext, num_sentences=int(request.form['num_summary_sentences']))
+        summary = chunk_summarize_t5(rawtext)
 
         most_subjective, least_subjective = textblob_topn_subjectivity(rawtext, num_sentences=int(request.form['num_subj_sent_sentences']))
 
         top_positive, top_negative = flair_topn_sentiment(rawtext, num_sentences=int(request.form['num_subj_sent_sentences']))
 
-    return render_template('analyze.html', version=VERSION, header=header,
-                           word_frequency_summary=word_frequency_summary,
+    return render_template('analyze.html', version=VERSION, header=header, summary=summary,
                            most_subjective=most_subjective, least_subjective=least_subjective,
                            top_positive=top_positive, top_negative=top_negative)
 
@@ -110,11 +106,9 @@ def multi_analyze():
             cleaned_text[f'l_text{i+1}'] = clean_text(orig_text[f'l_text{i+1}'])
             cleaned_text[f'r_text{i + 1}'] = clean_text(orig_text[f'r_text{i + 1}'])
 
-
-        num_summary_sentences = int(request.form['num_summary_sentences'])
         num_subj_sent_sentences = int(request.form['num_subj_sent_sentences'])
 
-        # TODO low priority: load flair model once so you don't need to do it on each call
+        model = flair.models.TextClassifier.load('en-sentiment')
 
         left_positive = []
         left_negative = []
@@ -126,28 +120,26 @@ def multi_analyze():
         for i in range(5):
 
             if cleaned_text[f'l_text{i+1}']:
-                individual_article_results[f'tfidf_summary_l{i+1}'] = run_tf_idf_summarization(cleaned_text[f'l_text{i+1}'], num_sentences=num_summary_sentences)
-                individual_article_results[f'word_frequency_summary_l{i+1}'] = run_word_frequency_summarization(cleaned_text[f'l_text{i + 1}'], num_sentences=num_summary_sentences)
+                individual_article_results[f'summary_l{i+1}'] = chunk_summarize_t5(cleaned_text[f'l_text{i+1}'])
 
                 most_subjective, least_subjective = textblob_topn_subjectivity(cleaned_text[f'l_text{i+1}'], num_sentences=num_subj_sent_sentences)
                 individual_article_results[f'most_subjective_l{i+1}'] = most_subjective
                 individual_article_results[f'least_subjective_l{i + 1}'] = least_subjective
 
-                top_positive, top_negative = flair_topn_sentiment(cleaned_text[f'l_text{i+1}'], num_sentences=num_subj_sent_sentences)
+                top_positive, top_negative = flair_topn_sentiment(cleaned_text[f'l_text{i+1}'], model=model, num_sentences=num_subj_sent_sentences)
                 individual_article_results[f'top_positive_l{i+1}'] = top_positive
                 individual_article_results[f'top_negative_l{i + 1}'] = top_negative
                 left_positive.extend(top_positive)
                 left_negative.extend(top_negative)
 
             if cleaned_text[f'r_text{i+1}']:
-                individual_article_results[f'tfidf_summary_r{i+1}'] = run_tf_idf_summarization(cleaned_text[f'r_text{i+1}'], num_sentences=num_summary_sentences)
-                individual_article_results[f'word_frequency_summary_r{i+1}'] = run_word_frequency_summarization(cleaned_text[f'r_text{i + 1}'], num_sentences=num_summary_sentences)
+                individual_article_results[f'summary_r{i+1}'] = chunk_summarize_t5(cleaned_text[f'r_text{i+1}'])
 
                 most_subjective, least_subjective = textblob_topn_subjectivity(cleaned_text[f'r_text{i+1}'], num_sentences=num_subj_sent_sentences)
                 individual_article_results[f'most_subjective_r{i+1}'] = most_subjective
                 individual_article_results[f'least_subjective_r{i + 1}'] = least_subjective
 
-                top_positive, top_negative = flair_topn_sentiment(cleaned_text[f'r_text{i+1}'], num_sentences=num_subj_sent_sentences)
+                top_positive, top_negative = flair_topn_sentiment(cleaned_text[f'r_text{i+1}'], model=model, num_sentences=num_subj_sent_sentences)
                 individual_article_results[f'top_positive_r{i+1}'] = top_positive
                 individual_article_results[f'top_negative_r{i + 1}'] = top_negative
                 right_positive.extend(top_positive)
@@ -168,7 +160,6 @@ def multi_analyze():
     return render_template('multi_analyze.html', version=VERSION, header=header,
                            left_positive=left_positive, left_negative=left_negative,
                            right_positive=right_positive, right_negative=right_negative,
-                           num_summary_sentences=num_summary_sentences,
                            num_subj_sent_sentences=num_subj_sent_sentences,
                            **orig_text, **individual_article_results)
 

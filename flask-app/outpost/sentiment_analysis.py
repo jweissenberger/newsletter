@@ -70,13 +70,16 @@ def flair_sentiment_analysis(text, model=None):
     return pos_or_neg, score
 
 
-def flair_sentence_by_sentence_sentiment_analysis(text):
+def flair_sentence_by_sentence_sentiment_analysis(text, model=False):
 
     sentences = sentence_tokenizer(text)
 
     positive_sentences = []
     negative_sentences = []
-    flair_sentiment = flair.models.TextClassifier.load('en-sentiment')
+    if not model:
+        flair_sentiment = flair.models.TextClassifier.load('en-sentiment')
+    else:
+        flair_sentiment = model
 
     for sentence in sentences:
         positive_or_negative, score = flair_sentiment_analysis(sentence, model=flair_sentiment)
@@ -92,26 +95,8 @@ def flair_sentence_by_sentence_sentiment_analysis(text):
     return positive_sentences, negative_sentences
 
 
-def flair_average_sentiment(text):
-    positive_sentences, negative_sentences = flair_sentence_by_sentence_sentiment_analysis(text)
-
-    pos = 0
-    neg = 0
-    for i in positive_sentences:
-        pos += i[0]
-    pos = pos/len(positive_sentences)
-
-    for j in negative_sentences:
-        neg += j[0]
-    neg = neg/len(negative_sentences)
-
-    output = pos - neg
-
-    return output
-
-
-def flair_topn_sentiment(text, num_sentences=3):
-    pos_sentences, neg_sentences = flair_sentence_by_sentence_sentiment_analysis(text)
+def flair_topn_sentiment(text, model=False, num_sentences=3):
+    pos_sentences, neg_sentences = flair_sentence_by_sentence_sentiment_analysis(text, model=model)
 
     top_positive = pos_sentences[-num_sentences:]
     top_negative = neg_sentences[-num_sentences:]

@@ -21,8 +21,6 @@
         <textarea name="rawtext" cols="3" rows="3" class="form-control">
         </textarea>
 
-        <label for="num_summary_sentences">Number of Sentences to Extract for Summary:</label><br>
-        <input type="text" id="num_summary_sentences" name="num_summary_sentences"><br>
         <label for="num_subj_sent_sentences">Number of Sentences to Output for Sentiment and Subjectivity:</label><br>
         <input type="text" id="num_subj_sent_sentences" name="num_subj_sent_sentences">
 
@@ -37,13 +35,8 @@
 
 <div class="container">
     <hr>
-    <p><b>Extractive Summaries</b></p>
-    <label>TF IDF Summary:</label>
-    <p>{{tfidf_summary}}</p>
-
-    <br>
-    <label>Word Frequency Summary</label>
-    <p>{{word_frequency_summary}}</p>
+    <p><b>Summary</b></p>
+    <p>{{summary}}</p>
 
     <hr>
     <p><b>Sentiment Analysis</b></p>
