@@ -12,18 +12,7 @@
 </head>
 <body>
 
-<div class="jumbotron text-center">
-    <div class="container">
-        <h2>The Outpost News Article Analysis Tool v0.0.4</h2>
-    </div>
-
-</div>
-
-<div class="topnav">
-  <a class="active" href="/">Summarizer</a>
-  <a href="/single">Single Article Analysis</a>
-  <a href="/multi_article">Multi Article Analysis</a>
-</div>
+{{header |safe}}
 
 <div class="container">
     <form method="POST" action="/summarize_result" class="form-group">
@@ -48,10 +37,6 @@
     <p>WARNING: some or all of these summaries might be extractive. I'm working on adding a feature to check for this soon</p>
     <label>Summary 1:</label>
     <p>{{large_summary}}</p>
-
-    <br>
-    <label>Summary 2:</label>
-    <p>{{small_summary}}</p>
 
 
     <br><br><br>

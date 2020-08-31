@@ -1,7 +1,6 @@
 from flask import Flask, request, render_template
 from flask_bootstrap import Bootstrap
 
-from statistical_summarize import run_tf_idf_summarization, run_word_frequency_summarization
 from subjectivity_analysis import textblob_topn_subjectivity
 from sentiment_analysis import flair_topn_sentiment
 from hft5_summarizer import chunk_summarize_t5
@@ -11,42 +10,68 @@ from hft5_summarizer import chunk_summarize_t5
 app = Flask(__name__)
 Bootstrap(app)
 
-# TODO make version number defined here maybe so that it can get updated on each of the templates
+VERSION = 'v0.0.5'
 
 
 def clean_text(text):
-    text = text.replace('*', '')
-    text = text.replace('-', ' ')
-    text = text.replace('#', '')
+    # TODO move to common
 
-    return text
+    text = text.replace('&', 'and')
+
+    allowed_symbols = ['"', "'", ' ', '$', ':', '.', '?', '!', '(', ')', '/', ';']
+
+    new_text = ""
+    for char in text:
+        if char.isalnum() or char in allowed_symbols:
+            new_text += char
+
+    return new_text
 
 
-@app.route('/')
+def generate_header(summarizer='', single='', multi=''):
+
+    # need to set what you want to 'class="active"'
+    header = f'<div class="jumbotron text-center"><div class="container">' \
+             f'<h2>The Outpost News Article Analysis Tool {VERSION}</h2></div></div>'\
+             f'<div class="topnav">' \
+             f'<a {multi} href="/">Multi Article Analysis</a>' \
+             f'<a {single} href="/single">Single Article Analysis</a>' \
+             f'<a {summarizer} href="/sum">Summarizer</a>' \
+             f'</div>'
+    return header
+
+
+@app.route('/sum')
 def summarize():
-    return render_template('summarize.html')
+
+    header = generate_header(summarizer='class="active"')
+
+    return render_template('summarize.html', version=VERSION, header=header)
 
 
 @app.route('/summarize_result', methods=['GET', 'POST'])
 def summarize_result():
+    header = generate_header(summarizer='class="active"')
+
     if request.method == 'POST':
         rawtext = request.form['rawtext']
         clean = clean_text(rawtext)
 
         large_summary = chunk_summarize_t5(clean, size='large')
-        small_summary = chunk_summarize_t5(clean, size='small')
 
-    return render_template('summarize_result.html', rawtext=rawtext, large_summary=large_summary,
-                           small_summary=small_summary)
+    return render_template('summarize_result.html', version=VERSION, header=header, rawtext=rawtext,
+                           large_summary=large_summary)
 
 
 @app.route('/single')
 def single():
-    return render_template('single.html')
+    header = generate_header(single='class="active"')
+    return render_template('single.html', version=VERSION, header=header)
 
 
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
+    header = generate_header(single='class="active"')
     if request.method == 'POST':
         rawtext = request.form['rawtext']
 
@@ -62,13 +87,15 @@ def analyze():
 
         top_positive, top_negative = flair_topn_sentiment(rawtext, num_sentences=int(request.form['num_subj_sent_sentences']))
 
-    return render_template('analyze.html', tfidf_summary=tfidf_summary, word_frequency_summary=word_frequency_summary,
+    return render_template('analyze.html', version=VERSION, header=header,
+                           word_frequency_summary=word_frequency_summary,
                            most_subjective=most_subjective, least_subjective=least_subjective,
                            top_positive=top_positive, top_negative=top_negative)
 
 
 @app.route('/multi_analyze', methods=['GET', 'POST'])
 def multi_analyze():
+    header = generate_header(multi='class="active"')
     if request.method == 'POST':
 
         orig_text = {}
@@ -138,16 +165,18 @@ def multi_analyze():
         right_negative = sorted(right_negative, key=lambda x: x[0])
         right_negative = right_negative[-num_subj_sent_sentences:]
 
-    return render_template('multi_analyze.html', left_positive=left_positive, left_negative=left_negative,
+    return render_template('multi_analyze.html', version=VERSION, header=header,
+                           left_positive=left_positive, left_negative=left_negative,
                            right_positive=right_positive, right_negative=right_negative,
                            num_summary_sentences=num_summary_sentences,
                            num_subj_sent_sentences=num_subj_sent_sentences,
                            **orig_text, **individual_article_results)
 
 
-@app.route('/multi_article')
+@app.route('/')
 def multi_article():
-    return render_template('multi_article.html')
+    header = generate_header(multi='class="active"')
+    return render_template('multi_article.html', version=VERSION, header=header)
 
 
 if __name__ == '__main__':

@@ -42,7 +42,7 @@ def summarize_t5(text, size='small'):
     return output
 
 
-def chunk_summarize_t5(text, size='small'):
+def chunk_summarize_t5(text, size='large'):
 
     num_sentences = len(sentence_tokenizer(text))
     if num_sentences > 40:
@@ -61,10 +61,7 @@ def chunk_summarize_t5(text, size='small'):
     if tokenized_text.shape[1] < 500:
         return summarize_t5(text, size=size)
 
-    if size == 'small':
-        max_size = 200
-    else:
-        max_size = 400
+    max_size = 400
 
     num_chunks = math.ceil(tokenized_text.shape[1]/max_size)
 

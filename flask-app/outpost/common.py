@@ -1,6 +1,6 @@
 from nltk.tokenize import sent_tokenize
 
-
+#TODO needs to change how we do quotes
 def sentence_tokenizer(text):
     """
     Sentence tokenizer
@@ -23,20 +23,32 @@ def sentence_tokenizer(text):
     return output
 
 
-def article_cleaner(article):
-    article = article.replace('*', '')
-    article = article.replace('-', '')
-    article = article.replace('#', '')
+def plagiarism_checker(new_text, orig_text):
 
-    paragraphs = article.split('\n')
+    new_text = new_text.lower()
+    orig_text = orig_text.lower()
 
-    output = ""
-    # This will probably remove title and small subheadings (Do I want to do this?)
-    for para in paragraphs:
-        if len(sentence_tokenizer(para)) == 1 or para == '' or para.isspace():
-            continue
-        if output == "":
-            output += para
+    splits = new_text.split(' ')
 
+    len_chunk = 7
+    for i in range(len(splits) - len_chunk):
+        chunk = splits[i:i+len_chunk]
+
+        chunk_text = ''
+        for j in chunk:
+            chunk_text += j + ' '
+
+        chunk_text = chunk_text.strip()
+
+        if chunk_text in orig_text:
+            print(chunk_text)
+
+
+if __name__ == '__main__':
+
+    a = "This is a test text, I want to see if this works, it should because I am just going to copy and paste part fo it"
+    b = 'I want to see if this works, it should because I am'
+
+    plagiarism_checker(new_text=b, orig_text=a)
 
 
