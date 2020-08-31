@@ -1,10 +1,12 @@
 from flask import Flask, request, render_template
 from flask_bootstrap import Bootstrap
 import flair
+import random
 
 from subjectivity_analysis import textblob_topn_subjectivity
 from sentiment_analysis import flair_topn_sentiment
 from hft5_summarizer import chunk_summarize_t5
+from common import sentence_tokenizer
 
 
 # Initialize App
@@ -108,6 +110,7 @@ def multi_analyze():
 
         num_subj_sent_sentences = int(request.form['num_subj_sent_sentences'])
 
+        # import it once so you don't have to load bert 10 times
         model = flair.models.TextClassifier.load('en-sentiment')
 
         left_positive = []
@@ -127,8 +130,8 @@ def multi_analyze():
                 individual_article_results[f'least_subjective_l{i + 1}'] = least_subjective
 
                 top_positive, top_negative = flair_topn_sentiment(cleaned_text[f'l_text{i+1}'], model=model, num_sentences=num_subj_sent_sentences)
-                individual_article_results[f'top_positive_l{i+1}'] = top_positive
-                individual_article_results[f'top_negative_l{i + 1}'] = top_negative
+                individual_article_results[f'top_positive_l{i+1}'] = reversed(top_positive)
+                individual_article_results[f'top_negative_l{i + 1}'] = reversed(top_negative)
                 left_positive.extend(top_positive)
                 left_negative.extend(top_negative)
 
@@ -140,27 +143,59 @@ def multi_analyze():
                 individual_article_results[f'least_subjective_r{i + 1}'] = least_subjective
 
                 top_positive, top_negative = flair_topn_sentiment(cleaned_text[f'r_text{i+1}'], model=model, num_sentences=num_subj_sent_sentences)
-                individual_article_results[f'top_positive_r{i+1}'] = top_positive
-                individual_article_results[f'top_negative_r{i + 1}'] = top_negative
+                individual_article_results[f'top_positive_r{i+1}'] = reversed(top_positive)
+                individual_article_results[f'top_negative_r{i + 1}'] = reversed(top_negative)
                 right_positive.extend(top_positive)
                 right_negative.extend(top_negative)
 
+        # get the most positive and negative sentences from both sides
         left_positive = sorted(left_positive, key=lambda x: x[0])
-        left_positive = left_positive[-num_subj_sent_sentences:]
+        left_positive = reversed(left_positive[-num_subj_sent_sentences:])
 
         right_positive = sorted(right_positive, key=lambda x: x[0])
-        right_positive = right_positive[-num_subj_sent_sentences:]
+        right_positive = reversed(right_positive[-num_subj_sent_sentences:])
 
         left_negative = sorted(left_negative, key=lambda x: x[0])
-        left_negative = left_negative[-num_subj_sent_sentences:]
+        left_negative = reversed(left_negative[-num_subj_sent_sentences:])
 
         right_negative = sorted(right_negative, key=lambda x: x[0])
-        right_negative = right_negative[-num_subj_sent_sentences:]
+        right_negative = reversed(right_negative[-num_subj_sent_sentences:])
+
+        # generate right left and overall summaries
+        left_summary = []
+        right_summary = []
+        for i in range(5):
+            if individual_article_results[f'summary_l{i+1}']:
+                left_summary.append(individual_article_results[f'summary_l{i+1}'])
+            if individual_article_results[f'summary_r{i+1}']:
+                right_summary.append(individual_article_results[f'summary_r{i + 1}'])
+
+        left_summary = random.shuffle(left_summary)
+        right_summary = random.shuffle(right_summary)
+
+        new_summary = ''
+        for i in left_summary:
+            new_summary += i + ' '
+        left_summary = new_summary
+
+        new_summary = ''
+        for i in right_summary:
+            new_summary += i + ' '
+        right_summary = new_summary
+
+        if len(sentence_tokenizer(left_summary)) > 7:
+            left_summary = chunk_summarize_t5(left_summary)
+
+        if len(sentence_tokenizer(right_summary)) > 7:
+            right_summary = chunk_summarize_t5(right_summary)
+
+        overall_summary = chunk_summarize_t5(left_summary + right_summary)
 
     return render_template('multi_analyze.html', version=VERSION, header=header,
                            left_positive=left_positive, left_negative=left_negative,
                            right_positive=right_positive, right_negative=right_negative,
                            num_subj_sent_sentences=num_subj_sent_sentences,
+                           left_summary=left_summary, right_summary=right_summary, overall_summary=overall_summary,
                            **orig_text, **individual_article_results)
 
 

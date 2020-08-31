@@ -54,7 +54,7 @@ def chunk_summarize_t5(text, size='large'):
 
     preprocess_text = text.strip().replace("\n", "")
     t5_prepared_Text = "summarize: " + preprocess_text
-    device = torch.device('cpu')
+    device = torch.device('cpu')  # TODO this should be dynamic
     tokenizer = T5Tokenizer.from_pretrained(f't5-{size}')
     tokenized_text = tokenizer.encode(t5_prepared_Text, return_tensors="pt").to(device)
 
