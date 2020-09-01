@@ -165,13 +165,13 @@ def multi_analyze():
         left_summary = []
         right_summary = []
         for i in range(5):
-            if individual_article_results[f'summary_l{i+1}']:
+            if individual_article_results.get(f'summary_l{i+1}'):
                 left_summary.append(individual_article_results[f'summary_l{i+1}'])
-            if individual_article_results[f'summary_r{i+1}']:
+            if individual_article_results.get(f'summary_r{i+1}'):
                 right_summary.append(individual_article_results[f'summary_r{i + 1}'])
 
-        left_summary = random.shuffle(left_summary)
-        right_summary = random.shuffle(right_summary)
+        random.shuffle(left_summary)
+        random.shuffle(right_summary)
 
         new_summary = ''
         for i in left_summary:
