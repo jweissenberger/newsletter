@@ -4,7 +4,7 @@ numpy
 gensim
 sentencepiece
 tfds-nightly
-transformers
+transformers==3.1.0
 jupyterlab
 flask
 flask_bootstrap

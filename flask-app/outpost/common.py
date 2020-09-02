@@ -28,6 +28,8 @@ def plagiarism_checker(new_text, orig_text):
     new_text = new_text.lower()
     orig_text = orig_text.lower()
 
+    orig_pladgerism = {}
+
     splits = new_text.split(' ')
 
     len_chunk = 7

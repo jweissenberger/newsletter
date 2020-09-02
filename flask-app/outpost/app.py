@@ -5,7 +5,7 @@ import random
 
 from subjectivity_analysis import textblob_topn_subjectivity
 from sentiment_analysis import flair_topn_sentiment
-from hft5_summarizer import chunk_summarize_t5
+from hf_summarizer import chunk_summarize_t5, pegasus_summarization
 from common import sentence_tokenizer
 
 
@@ -13,7 +13,7 @@ from common import sentence_tokenizer
 app = Flask(__name__)
 Bootstrap(app)
 
-VERSION = 'v0.0.5'
+VERSION = 'v0.0.6'
 
 
 def clean_text(text):
@@ -49,7 +49,7 @@ def summarize():
 
     header = generate_header(summarizer='class="active"')
 
-    return render_template('summarize.html', version=VERSION, header=header)
+    return render_template('summarize.html', header=header)
 
 
 @app.route('/summarize_result', methods=['GET', 'POST'])
@@ -62,14 +62,22 @@ def summarize_result():
 
         large_summary = chunk_summarize_t5(clean, size='large')
 
-    return render_template('summarize_result.html', version=VERSION, header=header, rawtext=rawtext,
-                           large_summary=large_summary)
+        # pegasus models
+        models = ['google/pegasus-xsum', 'google/pegasus-newsroom', 'google/pegasus-cnn_dailymail',
+                  'google/pegasus-multi_news', 'google/pegasus-gigaword']
+        pegasus_models = {}
+        for model in models:
+            model_name = model.split('-')[-1]
+            pegasus_models[model_name] = pegasus_summarization(text=clean, model_name=model)
+
+    return render_template('summarize_result.html', header=header, rawtext=rawtext,
+                           large_summary=large_summary, **pegasus_models)
 
 
 @app.route('/single')
 def single():
     header = generate_header(single='class="active"')
-    return render_template('single.html', version=VERSION, header=header)
+    return render_template('single.html', header=header)
 
 
 @app.route('/analyze', methods=['GET', 'POST'])
@@ -86,7 +94,7 @@ def analyze():
 
         top_positive, top_negative = flair_topn_sentiment(rawtext, num_sentences=int(request.form['num_subj_sent_sentences']))
 
-    return render_template('analyze.html', version=VERSION, header=header, summary=summary,
+    return render_template('analyze.html', header=header, summary=summary,
                            most_subjective=most_subjective, least_subjective=least_subjective,
                            top_positive=top_positive, top_negative=top_negative)
 
@@ -191,7 +199,7 @@ def multi_analyze():
 
         overall_summary = chunk_summarize_t5(left_summary + right_summary)
 
-    return render_template('multi_analyze.html', version=VERSION, header=header,
+    return render_template('multi_analyze.html', header=header,
                            left_positive=left_positive, left_negative=left_negative,
                            right_positive=right_positive, right_negative=right_negative,
                            num_subj_sent_sentences=num_subj_sent_sentences,
@@ -202,7 +210,7 @@ def multi_analyze():
 @app.route('/')
 def multi_article():
     header = generate_header(multi='class="active"')
-    return render_template('multi_article.html', version=VERSION, header=header)
+    return render_template('multi_article.html', header=header)
 
 
 if __name__ == '__main__':

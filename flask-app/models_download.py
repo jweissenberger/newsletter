@@ -1,4 +1,4 @@
-from transformers import T5Tokenizer, T5ForConditionalGeneration
+from transformers import T5ForConditionalGeneration, PegasusForConditionalGeneration, PegasusTokenizer
 import nltk
 
 if __name__ == '__main__':
@@ -10,4 +10,10 @@ if __name__ == '__main__':
 
     # T5 model download
     model = T5ForConditionalGeneration.from_pretrained('t5-large')
-    model = T5ForConditionalGeneration.from_pretrained('t5-small')
+
+    # pegasus download
+    models = ['google/pegasus-xsum', 'google/pegasus-newsroom', 'google/pegasus-cnn_dailymail',
+              'google/pegasus-multi_news', 'google/pegasus-gigaword']
+    for model in models:
+        tokenizer = PegasusTokenizer.from_pretrained(model)
+        pegasus = PegasusForConditionalGeneration.from_pretrained(model)

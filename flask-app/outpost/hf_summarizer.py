@@ -3,6 +3,7 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 import math
 from common import sentence_tokenizer
 from statistical_summarize import run_tf_idf_summarization, run_word_frequency_summarization
+from transformers import PegasusForConditionalGeneration, PegasusTokenizer
 
 
 def summarize_t5(text, size='small'):
@@ -54,7 +55,7 @@ def chunk_summarize_t5(text, size='large'):
 
     preprocess_text = text.strip().replace("\n", "")
     t5_prepared_Text = "summarize: " + preprocess_text
-    device = torch.device('cpu')  # TODO this should be dynamic
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     tokenizer = T5Tokenizer.from_pretrained(f't5-{size}')
     tokenized_text = tokenizer.encode(t5_prepared_Text, return_tensors="pt").to(device)
 
@@ -105,11 +106,35 @@ def chunks(l, n):
         yield l[si:si+(d+1 if i < r else d)]
 
 
+def pegasus_summarization(text, model_name):
+
+    if type(text) != list:
+        text = [text]
+
+    torch_device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    tokenizer = PegasusTokenizer.from_pretrained(model_name)
+    model = PegasusForConditionalGeneration.from_pretrained(model_name).to(torch_device)
+    batch = tokenizer.prepare_seq2seq_batch(text, truncation=True, padding='longest').to(torch_device)
+    translated = model.generate(**batch)
+    tgt_text = tokenizer.batch_decode(translated, skip_special_tokens=True)
+
+    if type(tgt_text) is list:
+        temp = ''
+        for i in tgt_text:
+            temp += i + ''
+        tgt_text = temp
+
+    return tgt_text
+
+
 if __name__ == '__main__':
 
     file = open("fox.txt", "r")
     text = file.read()
     file.close()
+
+    pegasus_models = ['google/pegasus-xsum', 'google/pegasus-newsroom', 'google/pegasus-cnn_dailymail',
+              'google/pegasus-multi_news', 'google/pegasus-gigaword']
 
     print('\n\n\nLarge:\n', chunk_summarize_t5(text, size='large'), '\n\n\n')
     print('\n\n\nSmall:\n', chunk_summarize_t5(text, size='small'), '\n\n\n')
