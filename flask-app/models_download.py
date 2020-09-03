@@ -12,8 +12,7 @@ if __name__ == '__main__':
     model = T5ForConditionalGeneration.from_pretrained('t5-large')
 
     # pegasus download
-    models = ['google/pegasus-cnn_dailymail',
-              'google/pegasus-multi_news', 'google/pegasus-gigaword']
+    models = ['google/pegasus-xsum', 'google/pegasus-newsroom']
     for model in models:
         tokenizer = PegasusTokenizer.from_pretrained(model)
         pegasus = PegasusForConditionalGeneration.from_pretrained(model)
