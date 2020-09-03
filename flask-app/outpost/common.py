@@ -28,7 +28,9 @@ def plagiarism_checker(new_text, orig_text):
     new_text = new_text.lower()
     orig_text = orig_text.lower()
 
-    orig_pladgerism = {}
+    orig_pladgerism = {}  # key is the number of the word in orig text and value is binary for if pladgerized
+    for i in range(orig_text.split(' ')):
+        orig_pladgerism[i] = False
 
     splits = new_text.split(' ')
 

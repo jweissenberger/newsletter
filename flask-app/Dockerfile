@@ -7,10 +7,12 @@ RUN apt-get install gunicorn3 -y
 COPY requirements.txt requirements.txt
 COPY outpost /opt/
 COPY models_download.py models_download.py
+COPY models_download2.py models_download2.py
 
 
 RUN pip3 install -r requirements.txt
 RUN python3 models_download.py
+RUN python3 models_download2.py
 
 WORKDIR /opt/
 
