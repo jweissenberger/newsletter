@@ -1,5 +1,4 @@
-from transformers import T5ForConditionalGeneration, PegasusForConditionalGeneration, PegasusTokenizer
-import nltk
+from transformers import PegasusForConditionalGeneration, PegasusTokenizer
 
 if __name__ == '__main__':
     # pegasus download
