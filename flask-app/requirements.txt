@@ -1,11 +1,8 @@
 nltk
 textblob
-numpy
-gensim
 sentencepiece
 tfds-nightly
-transformers==3.1.0
-jupyterlab
 flask
 flask_bootstrap
 flair
+transformers==3.1.0
