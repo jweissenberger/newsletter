@@ -30,9 +30,9 @@ def plagiarism_checker(new_text, orig_text):
 
     splits = new_text.split(' ')
 
-    new_pladgerism = {}  # key is the number of the word in orig text and value is binary for if pladgerized
+    new_plagiarism = {}  # key is the number of the word in orig text and value is binary for if pladgerized
     for i in range(len(splits)):
-        new_pladgerism[i] = False
+        new_plagiarism[i] = False
 
     len_chunk = 4
     for i in range(len(splits) - len_chunk):
@@ -46,40 +46,48 @@ def plagiarism_checker(new_text, orig_text):
 
         if chunk_text in orig_text:
             for j in range(i, i+len_chunk+1):
-                new_pladgerism[j] = True
+                new_plagiarism[j] = True
 
     # print out
     open = '<span style="color:red;">'
     close = '</span>'
     output = ''
+    words_plagiarized = 0
     for i in range(len(splits)):
+        if new_plagiarism[i]:
+            words_plagiarized += 1
+
         # first element is stolen
-        if i == 0 and new_pladgerism[0]:
+        if i == 0 and new_plagiarism[0]:
             output += open + splits[i] + ' '
             continue
 
         # non first element is stolen (first of bunch)
-        if new_pladgerism[i] and not new_pladgerism[i - 1]:
+        if new_plagiarism[i] and not new_plagiarism[i - 1]:
             output += open + splits[i] + ' '
             continue
 
         # last element is stolen
-        if new_pladgerism[i] and i == len(splits) - 1:
+        if new_plagiarism[i] and i == len(splits) - 1:
             output += splits[i] + close
             continue
 
         # middle of a bunch of stolen elements
-        if new_pladgerism[i] and new_pladgerism[i+1] and new_pladgerism [i - 1]:
+        if new_plagiarism[i] and new_plagiarism[i+1] and new_plagiarism [i - 1]:
             output += splits[i] + ' '
 
         # end of a bunch of stolen
-        if new_pladgerism[i] and not new_pladgerism[i + 1]:
+        if new_plagiarism[i] and not new_plagiarism[i + 1]:
             output += splits[i] + close + ' '
             continue
 
         # element not stolen
-        if not new_pladgerism[i]:
+        if not new_plagiarism[i]:
             output += splits[i] + ' '
+
+    # calculate % plagiarism
+    percent_plagiarism = (words_plagiarized / len(splits)) * 100
+    output = f'Percent Plagiarism: {percent_plagiarism}%<br>' + output
 
     return output
 
