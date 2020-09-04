@@ -13,7 +13,7 @@ from common import sentence_tokenizer, plagiarism_checker
 app = Flask(__name__)
 Bootstrap(app)
 
-VERSION = 'v0.0.6'
+VERSION = 'v0.0.7'
 
 
 def clean_text(text):
