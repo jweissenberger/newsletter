@@ -6,7 +6,7 @@ import random
 from subjectivity_analysis import textblob_topn_subjectivity
 from sentiment_analysis import flair_topn_sentiment
 from hf_summarizer import chunk_summarize_t5, pegasus_summarization
-from common import sentence_tokenizer
+from common import sentence_tokenizer, plagiarism_checker
 
 
 # Initialize App
@@ -60,7 +60,8 @@ def summarize_result():
         rawtext = request.form['rawtext']
         clean = clean_text(rawtext)
 
-        large_summary = chunk_summarize_t5(clean, size='large')
+        summary = chunk_summarize_t5(clean, size='large')
+        large_summary = plagiarism_checker(new_text=summary, orig_text=clean)
 
         # pegasus models
         models = ['google/pegasus-xsum', 'google/pegasus-newsroom', 'google/pegasus-cnn_dailymail',
@@ -68,7 +69,9 @@ def summarize_result():
         pegasus_models = {}
         for model in models:
             model_name = model.split('-')[-1]
-            pegasus_models[model_name] = pegasus_summarization(text=clean, model_name=model)
+            summary = pegasus_summarization(text=clean, model_name=model)
+            output = plagiarism_checker(new_text=summary, orig_text=clean)
+            pegasus_models[model_name] = output
 
     return render_template('summarize_result.html', header=header, rawtext=rawtext,
                            large_summary=large_summary, **pegasus_models)
