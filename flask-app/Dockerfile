@@ -17,4 +17,4 @@ RUN python3 models_download2.py
 WORKDIR /opt/
 
 # TODO Workers should be equal to the number of cores
-CMD ["gunicorn3", "-b", "0.0.0.0:8000", "app:app", "--workers=8", "--timeout=10000"]
+CMD ["gunicorn3", "-b", "0.0.0.0:8000", "app:app", "--workers=16", "--timeout=10000"]
