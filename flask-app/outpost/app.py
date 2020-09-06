@@ -64,8 +64,7 @@ def summarize_result():
         large_summary = plagiarism_checker(new_text=summary, orig_text=clean)
 
         # pegasus models
-        models = ['google/pegasus-xsum', 'google/pegasus-newsroom', 'google/pegasus-cnn_dailymail',
-                  'google/pegasus-multi_news', 'google/pegasus-gigaword']
+        models = ['google/pegasus-xsum', 'google/pegasus-multi_news']
         pegasus_models = {}
         for model in models:
             model_name = model.split('-')[-1]
