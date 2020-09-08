@@ -2,33 +2,19 @@ from flask import Flask, request, render_template
 from flask_bootstrap import Bootstrap
 import flair
 import random
+import time
 
 from subjectivity_analysis import textblob_topn_subjectivity
 from sentiment_analysis import flair_topn_sentiment
 from hf_summarizer import chunk_summarize_t5, pegasus_summarization
-from common import sentence_tokenizer, plagiarism_checker
+from common import sentence_tokenizer, plagiarism_checker, clean_text
 
 
 # Initialize App
 app = Flask(__name__)
 Bootstrap(app)
 
-VERSION = 'v0.0.7'
-
-
-def clean_text(text):
-    # TODO move to common
-
-    text = text.replace('&', 'and')
-
-    allowed_symbols = ['"', "'", ' ', '$', ':', '.', '?', '!', '(', ')', '/', ';']
-
-    new_text = ""
-    for char in text:
-        if char.isalnum() or char in allowed_symbols:
-            new_text += char
-
-    return new_text
+VERSION = 'v0.0.8'
 
 
 def generate_header(summarizer='', single='', multi=''):
@@ -60,7 +46,13 @@ def summarize_result():
         rawtext = request.form['rawtext']
         clean = clean_text(rawtext)
 
+        times = {}
+
+        a = time.time()
         summary = chunk_summarize_t5(clean, size='large')
+        b = time.time()
+        times['t5_time'] = b-a
+
         large_summary = plagiarism_checker(new_text=summary, orig_text=clean)
 
         # pegasus models
@@ -68,12 +60,17 @@ def summarize_result():
         pegasus_models = {}
         for model in models:
             model_name = model.split('-')[-1]
+
+            a = time.time()
             summary = pegasus_summarization(text=clean, model_name=model)
+            b = time.time()
+            times[f'{model_name}_time'] = b-a
+
             output = plagiarism_checker(new_text=summary, orig_text=clean)
             pegasus_models[model_name] = output
 
     return render_template('summarize_result.html', header=header, rawtext=rawtext,
-                           large_summary=large_summary, **pegasus_models)
+                           large_summary=large_summary, **pegasus_models, **times)
 
 
 @app.route('/single')

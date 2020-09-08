@@ -1,12 +1,13 @@
 from nltk.tokenize import sent_tokenize
 
-#TODO needs to change how we do quotes
+
 def sentence_tokenizer(text):
     """
     Sentence tokenizer
     :param text:
     :return: list of sentences
     """
+    # TODO needs to change how we do quotes
     text = text.replace('*', '')
     text = text.replace('-', '')
     text = text.replace('#', '')
@@ -90,6 +91,20 @@ def plagiarism_checker(new_text, orig_text):
     output = f'Percent Plagiarism: {percent_plagiarism}%<br>' + output
 
     return output
+
+
+def clean_text(text):
+
+    text = text.replace('&', 'and')
+
+    allowed_symbols = ['"', "'", ' ', '$', ':', '.', '?', '!', '(', ')', '/', ';']
+
+    new_text = ""
+    for char in text:
+        if char.isalnum() or char in allowed_symbols:
+            new_text += char
+
+    return new_text
 
 
 if __name__ == '__main__':
