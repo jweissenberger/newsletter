@@ -17,7 +17,7 @@
 <div class="container">
     <form method="POST" action="/summarize_result" class="form-group">
         <br>
-        <h1>Summarizer</h1>
+        <h1>{{summarizer}} summary</h1>
         <label style="font-size:20px">Copy and Paste Article Here:</label><br>
         <textarea name="rawtext" cols="3" rows="3" class="form-control">{{rawtext}}
         </textarea>
@@ -33,17 +33,11 @@
 
 <div class="container">
     <hr>
-    <p><b>Summaries</b></p>
+    <p><b>Summary</b></p>
     <p>The text in red has been taken directly from the original and needs to be changed to avoid plagiarism</p>
-    <label>T5 Summary:</label>
-    <p>Seconds to run: {{ t5_time }}</p>
-    <p>{{large_summary | safe}}</p>
-    <label>Xsum Summary:</label>
-    <p>Seconds to run: {{ xsum_time }}</p>
-    <p>{{xsum | safe}}</p>
-    <label>multi_news Summary:</label>
-    <p>Seconds to run: {{ multi_news_time }}</p>
-    <p>{{multi_news | safe}}</p>
+    <label> Summary:</label>
+    <p>Seconds to run: {{ time }}</p>
+    <p>{{summary | safe}}</p>
 
     <br><br><br>
 </div>
