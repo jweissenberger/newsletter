@@ -1,14 +1,14 @@
 from flask import Flask, request, render_template
 from flask_bootstrap import Bootstrap
-import flair
 import random
 import time
 
-from subjectivity_analysis import textblob_topn_subjectivity
-from sentiment_analysis import flair_topn_sentiment
 from hf_summarizer import chunk_summarize_t5, pegasus_summarization
 from common import sentence_tokenizer, plagiarism_checker, clean_text
 
+#import flair
+#from subjectivity_analysis import textblob_topn_subjectivity
+#from sentiment_analysis import flair_topn_sentiment
 
 # Initialize App
 app = Flask(__name__)
