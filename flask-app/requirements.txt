@@ -1,8 +1,8 @@
-#nltk
-#textblob
-#sentencepiece
-#tfds-nightly
-#flask
+nltk
+textblob
+sentencepiece
+tfds-nightly
+flask
 flask_bootstrap
 flair
 transformers==3.1.0
