@@ -17,7 +17,7 @@ Bootstrap(app)
 VERSION = 'v0.0.9'
 
 
-def generate_header(t5='', xsum='', multi=''):
+def generate_header(t5='', xsum='', multi='', plag=''):
 
     # need to set what you want to 'class="active"'
     header = f'<div class="jumbotron text-center"><div class="container">' \
@@ -25,7 +25,8 @@ def generate_header(t5='', xsum='', multi=''):
              f'<div class="topnav">' \
              f'<a {multi} href="/">Multi Article Summary</a>' \
              f'<a {xsum} href="/xsum">XSum Summary</a>' \
-             f'<a {t5} href="/t5">T5</a>' \
+             f'<a {t5} href="/t5">T5 Summary</a>' \
+             f'<a {plag} href="/plagiarism">Plagiarism Detection</a>' \
              f'</div>'
     return header
 
@@ -35,7 +36,7 @@ def multi_news_summarize():
 
     header = generate_header(multi='class="active"')  # update
 
-    return render_template('summarize.html', header=header, summarizer="Multi Article",
+    return render_template('multi_news_summarize.html', header=header, summarizer="Multi Article",
                            result_url='/multi_result')
 
 
@@ -44,8 +45,18 @@ def multi_news_result():
     header = generate_header(multi='class="active"')
 
     if request.method == 'POST':
-        rawtext = request.form['rawtext']
-        clean = clean_text(rawtext)
+        texts = []
+        orig_text = {}
+        for i in range(4):
+            temp = request.form[f'text{i+1}']
+            orig_text[f'text{i+1}'] = temp
+            texts.append(clean_text(temp))
+
+        random.shuffle(texts)
+
+        clean = ''
+        for i in texts:
+            clean += i + '\n||||\n'
 
         a = time.time()
         summary = pegasus_summarization(text=clean, model_name='google/pegasus-multi_news')
@@ -54,8 +65,8 @@ def multi_news_result():
 
         output = plagiarism_checker(new_text=summary, orig_text=clean)
 
-    return render_template('summarize_result.html', header=header, rawtext=rawtext,
-                           summary=output, time=summary_time, summarizer="Xsum")
+    return render_template('multi_news_summarize_result.html', header=header,
+                           summary=output, time=summary_time, summarizer="Multi Article", **orig_text)
 
 
 @app.route('/xsum')
@@ -111,6 +122,31 @@ def t5_result():
 
     return render_template('summarize_result.html', header=header, rawtext=rawtext,
                            summary=output, time=summary_time, summarizer="T5")
+
+
+@app.route('/plagiarism')
+def plagiarism():
+
+    header = generate_header(plag='class="active"')
+
+    return render_template('plagiarism.html', header=header, result='',
+                           result_url='/t5_result')
+
+@app.route('/plagiarism_result', methods=['GET', 'POST'])
+def plagiarism_result():
+
+    header = generate_header(plag='class="active"')
+
+    if request.method == 'POST':
+        orig = request.form['orig']
+        orig = clean_text(orig)
+        new = request.form['new']
+        new = clean_text(new)
+
+        result = plagiarism_checker(new_text=new, orig_text=orig)
+
+    return render_template('plagiarism.html', header=header, result=result,
+                           result_url='/t5_result')
 
 
 # @app.route('/multi_news_result', methods=['GET', 'POST'])
