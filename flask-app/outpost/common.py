@@ -26,6 +26,9 @@ def sentence_tokenizer(text):
 
 def plagiarism_checker(new_text, orig_text):
 
+    # TODO, plagiarism not counting quotes
+    # TODO, fix handling of quotes not being attributed
+
     new_text = new_text.lower()
     orig_text = orig_text.lower()
 
@@ -74,7 +77,7 @@ def plagiarism_checker(new_text, orig_text):
             continue
 
         # middle of a bunch of stolen elements
-        if new_plagiarism[i] and new_plagiarism[i+1] and new_plagiarism [i - 1]:
+        if new_plagiarism[i] and new_plagiarism[i+1] and new_plagiarism[i - 1]:
             output += splits[i] + ' '
 
         # end of a bunch of stolen

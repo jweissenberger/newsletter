@@ -52,8 +52,6 @@ def multi_news_result():
             orig_text[f'text{i+1}'] = temp
             texts.append(clean_text(temp))
 
-        random.shuffle(texts)
-
         clean = ''
         for i in texts:
             clean += i + '\n||||\n'
