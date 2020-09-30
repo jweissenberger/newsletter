@@ -1,23 +1,19 @@
 from flask import Flask, request, render_template
 from flask_bootstrap import Bootstrap
-import random
+from newspaper import Article
 import time
 
 from hf_summarizer import chunk_summarize_t5, pegasus_summarization
 from common import sentence_tokenizer, plagiarism_checker, clean_text
 
-#import flair
-#from subjectivity_analysis import textblob_topn_subjectivity
-#from sentiment_analysis import flair_topn_sentiment
-
 # Initialize App
 app = Flask(__name__)
 Bootstrap(app)
 
-VERSION = 'v0.0.9'
+VERSION = 'v0.0.10'
 
 
-def generate_header(t5='', xsum='', multi='', plag=''):
+def generate_header(t5='', xsum='', multi='', plag='', ext=''):
 
     # need to set what you want to 'class="active"'
     header = f'<div class="jumbotron text-center"><div class="container">' \
@@ -27,8 +23,64 @@ def generate_header(t5='', xsum='', multi='', plag=''):
              f'<a {xsum} href="/xsum">XSum Summary</a>' \
              f'<a {t5} href="/t5">T5 Summary</a>' \
              f'<a {plag} href="/plagiarism">Plagiarism Detection</a>' \
+             f'<a {ext} href="/extract">Article Extraction</a>' \
              f'</div>'
     return header
+
+
+@app.route('/extract')
+def text_extraction():
+
+    header = generate_header(ext='class="active"')  # update
+
+    return render_template('extract.html', header=header, results='')
+
+
+@app.route('/extract_results', methods=['GET', 'POST'])
+def extraction_result():
+    header = generate_header(ext='class="active"')
+
+    if request.method == 'POST':
+        link = request.form['article_link']
+
+        source = link.split('.')[1]
+        source_names = {'foxnews': 'Fox News',
+                        'brietbart': 'Brietbart',
+                        'wsj': 'Wall Street Journal',
+                        'cnn': 'CNN',
+                        'nytimes': 'New York Times',
+                        'apnews': 'The Associated Press',
+                        'msnbc': 'MSNBC',
+                        'washingtonpost': 'The Washington Post'}
+        source = source_names.get(source, source)
+
+        article = Article(link)
+
+        article.download()
+        article.parse()
+
+        authors = article.authors
+        temp = []
+        for i in authors:
+            if len(i.split(' ')) > 5:
+                continue
+            temp.append(i)
+        authors = temp
+
+        by_line = ''
+        if len(authors) == 1:
+            by_line = f'By {authors[0]}'
+        else:
+            by_line = 'By '
+            for i in authors:
+                if i == authors[-1]:
+                    by_line += f'and {i}'
+                else:
+                    by_line += f'{i}, '
+
+        results = f'{source}:<br>{article.title}<br>{by_line}<br>{article.text}'
+
+    return render_template('extract.html', header=header, results=results)
 
 
 @app.route('/')

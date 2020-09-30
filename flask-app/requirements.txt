@@ -6,3 +6,4 @@ flask
 flask_bootstrap
 flair
 transformers==3.1.0
+newspaper3k
