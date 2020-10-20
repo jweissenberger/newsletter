@@ -1,25 +1,27 @@
 from flask import Flask, request, render_template
 from flask_bootstrap import Bootstrap
-from newspaper import Article
 import time
 
 from hf_summarizer import chunk_summarize_t5, pegasus_summarization
 from common import sentence_tokenizer, plagiarism_checker, clean_text
+from scraping import return_single_article
+from statistical_summarize import run_tf_idf_summarization
 
 # Initialize App
 app = Flask(__name__)
 Bootstrap(app)
 
-VERSION = 'v0.0.10'
+VERSION = 'v0.1.0'
 
 
-def generate_header(t5='', xsum='', multi='', plag='', ext=''):
+def generate_header(t5='', xsum='', multi='', plag='', ext='', generate=''):
 
     # need to set what you want to 'class="active"'
     header = f'<div class="jumbotron text-center"><div class="container">' \
              f'<h2>The Outpost News Article Analysis Tool {VERSION}</h2></div></div>'\
              f'<div class="topnav">' \
-             f'<a {multi} href="/">Multi Article Summary</a>' \
+             f'<a {generate} href="/">Article Generation</a>' \
+             f'<a {multi} href="/multi_news">Multi Article Summary</a>' \
              f'<a {xsum} href="/xsum">XSum Summary</a>' \
              f'<a {t5} href="/t5">T5 Summary</a>' \
              f'<a {plag} href="/plagiarism">Plagiarism Detection</a>' \
@@ -43,47 +45,12 @@ def extraction_result():
     if request.method == 'POST':
         link = request.form['article_link']
 
-        source = link.split('.')[1]
-        source_names = {'foxnews': 'Fox News',
-                        'brietbart': 'Brietbart',
-                        'wsj': 'Wall Street Journal',
-                        'cnn': 'CNN',
-                        'nytimes': 'New York Times',
-                        'apnews': 'The Associated Press',
-                        'msnbc': 'MSNBC',
-                        'washingtonpost': 'The Washington Post'}
-        source = source_names.get(source, source)
+        results, summary, _ = return_single_article(link, output_type='html')
 
-        article = Article(link)
-
-        article.download()
-        article.parse()
-
-        authors = article.authors
-        temp = []
-        for i in authors:
-            if len(i.split(' ')) > 5:
-                continue
-            temp.append(i)
-        authors = temp
-
-        by_line = ''
-        if len(authors) == 1:
-            by_line = f'By {authors[0]}'
-        else:
-            by_line = 'By '
-            for i in authors:
-                if i == authors[-1]:
-                    by_line += f'and {i}'
-                else:
-                    by_line += f'{i}, '
-
-        results = f'{source}:<br>{article.title}<br>{by_line}<br>{article.text}'
-
-    return render_template('extract.html', header=header, results=results)
+    return render_template('extract.html', header=header, results=results, summary=summary)
 
 
-@app.route('/')
+@app.route('/multi_news')
 def multi_news_summarize():
 
     header = generate_header(multi='class="active"')  # update
@@ -149,7 +116,7 @@ def xsum_result():
 @app.route('/t5')
 def t5_summarize():
 
-    header = generate_header(t5='class="active"')  # update
+    header = generate_header(t5='class="active"')
 
     return render_template('summarize.html', header=header, summarizer="T5",
                            result_url='/t5_result')
@@ -172,6 +139,90 @@ def t5_result():
 
     return render_template('summarize_result.html', header=header, rawtext=rawtext,
                            summary=output, time=summary_time, summarizer="T5")
+
+
+@app.route('/generated_articles', methods=['GET', 'POST'])
+def multi_analyze():
+    header = generate_header(generate='class="active"')
+    if request.method == 'POST':
+        a = time.time()
+
+        # TODO: title generation with xsum -> is it worth it right now? Would add an extra minute ish to this
+
+        orig_text = {}
+        left_text = ''
+        right_text = ''
+        left_summaries = ''
+        right_summaries = ''
+
+        # get right and left articles, summaries
+        for s in ['l', 'r']:
+            for i in range(5):
+
+                orig_text[f'{s}_link{i+1}'] = request.form[f'{s}_link{i+1}']
+                # if a link is given use newsarticle3k else parse the given text
+                if orig_text[f'{s}_link{i+1}']:
+                    article, summary, title = return_single_article(orig_text[f'{s}_link{i+1}'], output_type='string')
+                    if s == 'l':
+                        left_summaries += summary + '||||'
+                        left_text += article + '||||'
+                    else:
+                        right_summaries += summary + '||||'
+                        right_text += article + '||||'
+
+                elif request.form[f'{s}_text{i+1}']:
+                    orig_text[f'{s}_text{i + 1}'] = request.form[f'{s}_text{i+1}']
+
+                    clean = clean_text(orig_text[f'{s}_text{i + 1}'])
+                    if s == 'l':
+                        left_text += clean + '||||'
+                        left_summaries += run_tf_idf_summarization(clean, 6) + '||||'
+                    else:
+                        right_text += clean + '||||'
+                        right_summaries += run_tf_idf_summarization(clean, 6) + '||||'
+
+        # generate left and right summaries
+        left_summary1 = pegasus_summarization(text=left_summaries, model_name='google/pegasus-multi_news')
+        right_summary1 = pegasus_summarization(text=right_summaries, model_name='google/pegasus-multi_news')
+
+        left_summary2 = pegasus_summarization(text=left_text, model_name='google/pegasus-multi_news')
+        right_summary2 = pegasus_summarization(text=right_text, model_name='google/pegasus-multi_news')
+
+        print(left_text.split('||||'))
+        left_summary3 = ''
+        for i in left_text.split('||||')[:-1]:
+            left_summary3 += pegasus_summarization(text=i, model_name='google/pegasus-multi_news') + '\n'
+
+        right_summary3 = ''
+        for i in right_text.split('||||')[:-1]:
+            right_summary3 += pegasus_summarization(text=i, model_name='google/pegasus-multi_news') + '\n'
+
+
+        # generate overall summaries
+        overall_summary1 = chunk_summarize_t5(left_summary1 + ' ' + right_summary1, size='large')
+        overall_summary2 = chunk_summarize_t5(right_summary2 + ' ' + left_summary2, size='large')
+        overall_summary3 = chunk_summarize_t5(left_summary3 + ' ' + right_summary3, size='large')
+
+
+        b = time.time()
+
+        # TODO: add plagiarism detection
+
+        total_time = b-a
+
+
+
+    return render_template('multi_analyze.html', header=header, left_summary1=left_summary1, left_summary2=left_summary2,
+                           left_summary3=left_summary3, right_summary1=right_summary1, right_summary2=right_summary2,
+                           right_summary3=right_summary3, overall_summary1=overall_summary1, overall_summary2=overall_summary2,
+                           overall_summary3=overall_summary3, total_time=total_time,
+                           **orig_text)
+
+
+@app.route('/')
+def multi_article():
+    header = generate_header(generate='class="active"')
+    return render_template('multi_article.html', header=header)
 
 
 @app.route('/plagiarism')
@@ -294,118 +345,7 @@ def plagiarism_result():
 #                            top_positive=top_positive, top_negative=top_negative)
 #
 #
-# @app.route('/multi_analyze', methods=['GET', 'POST'])
-# def multi_analyze():
-#     header = generate_header(multi='class="active"')
-#     if request.method == 'POST':
-#
-#         orig_text = {}
-#         for i in range(5):
-#             orig_text[f'l_source{i+1}'] = request.form[f'l_source{i+1}']
-#             orig_text[f'l_text{i+1}'] = request.form[f'l_text{i+1}']
-#             orig_text[f'r_source{i + 1}'] = request.form[f'r_source{i + 1}']
-#             orig_text[f'r_text{i + 1}'] = request.form[f'r_text{i + 1}']
-#
-#         cleaned_text = {}
-#         for i in range(5):
-#             cleaned_text[f'l_text{i+1}'] = clean_text(orig_text[f'l_text{i+1}'])
-#             cleaned_text[f'r_text{i + 1}'] = clean_text(orig_text[f'r_text{i + 1}'])
-#
-#         num_subj_sent_sentences = int(request.form['num_subj_sent_sentences'])
-#
-#         # import it once so you don't have to load bert 10 times
-#         model = flair.models.TextClassifier.load('en-sentiment')
-#
-#         left_positive = []
-#         left_negative = []
-#
-#         right_positive = []
-#         right_negative = []
-#
-#         individual_article_results = {}
-#         for i in range(5):
-#
-#             if cleaned_text[f'l_text{i+1}']:
-#                 individual_article_results[f'summary_l{i+1}'] = chunk_summarize_t5(cleaned_text[f'l_text{i+1}'])
-#
-#                 most_subjective, least_subjective = textblob_topn_subjectivity(cleaned_text[f'l_text{i+1}'], num_sentences=num_subj_sent_sentences)
-#                 individual_article_results[f'most_subjective_l{i+1}'] = most_subjective
-#                 individual_article_results[f'least_subjective_l{i + 1}'] = least_subjective
-#
-#                 top_positive, top_negative = flair_topn_sentiment(cleaned_text[f'l_text{i+1}'], model=model, num_sentences=num_subj_sent_sentences)
-#                 individual_article_results[f'top_positive_l{i+1}'] = reversed(top_positive)
-#                 individual_article_results[f'top_negative_l{i + 1}'] = reversed(top_negative)
-#                 left_positive.extend(top_positive)
-#                 left_negative.extend(top_negative)
-#
-#             if cleaned_text[f'r_text{i+1}']:
-#                 individual_article_results[f'summary_r{i+1}'] = chunk_summarize_t5(cleaned_text[f'r_text{i+1}'])
-#
-#                 most_subjective, least_subjective = textblob_topn_subjectivity(cleaned_text[f'r_text{i+1}'], num_sentences=num_subj_sent_sentences)
-#                 individual_article_results[f'most_subjective_r{i+1}'] = most_subjective
-#                 individual_article_results[f'least_subjective_r{i + 1}'] = least_subjective
-#
-#                 top_positive, top_negative = flair_topn_sentiment(cleaned_text[f'r_text{i+1}'], model=model, num_sentences=num_subj_sent_sentences)
-#                 individual_article_results[f'top_positive_r{i+1}'] = reversed(top_positive)
-#                 individual_article_results[f'top_negative_r{i + 1}'] = reversed(top_negative)
-#                 right_positive.extend(top_positive)
-#                 right_negative.extend(top_negative)
-#
-#         # get the most positive and negative sentences from both sides
-#         left_positive = sorted(left_positive, key=lambda x: x[0])
-#         left_positive = reversed(left_positive[-num_subj_sent_sentences:])
-#
-#         right_positive = sorted(right_positive, key=lambda x: x[0])
-#         right_positive = reversed(right_positive[-num_subj_sent_sentences:])
-#
-#         left_negative = sorted(left_negative, key=lambda x: x[0])
-#         left_negative = reversed(left_negative[-num_subj_sent_sentences:])
-#
-#         right_negative = sorted(right_negative, key=lambda x: x[0])
-#         right_negative = reversed(right_negative[-num_subj_sent_sentences:])
-#
-#         # generate right left and overall summaries
-#         left_summary = []
-#         right_summary = []
-#         for i in range(5):
-#             if individual_article_results.get(f'summary_l{i+1}'):
-#                 left_summary.append(individual_article_results[f'summary_l{i+1}'])
-#             if individual_article_results.get(f'summary_r{i+1}'):
-#                 right_summary.append(individual_article_results[f'summary_r{i + 1}'])
-#
-#         random.shuffle(left_summary)
-#         random.shuffle(right_summary)
-#
-#         new_summary = ''
-#         for i in left_summary:
-#             new_summary += i + ' '
-#         left_summary = new_summary
-#
-#         new_summary = ''
-#         for i in right_summary:
-#             new_summary += i + ' '
-#         right_summary = new_summary
-#
-#         if len(sentence_tokenizer(left_summary)) > 7:
-#             left_summary = chunk_summarize_t5(left_summary)
-#
-#         if len(sentence_tokenizer(right_summary)) > 7:
-#             right_summary = chunk_summarize_t5(right_summary)
-#
-#         overall_summary = chunk_summarize_t5(left_summary + right_summary)
-#
-#     return render_template('multi_analyze.html', header=header,
-#                            left_positive=left_positive, left_negative=left_negative,
-#                            right_positive=right_positive, right_negative=right_negative,
-#                            num_subj_sent_sentences=num_subj_sent_sentences,
-#                            left_summary=left_summary, right_summary=right_summary, overall_summary=overall_summary,
-#                            **orig_text, **individual_article_results)
-#
-#
-# @app.route('/')
-# def multi_article():
-#     header = generate_header(multi='class="active"')
-#     return render_template('multi_article.html', header=header)
+
 
 
 if __name__ == '__main__':

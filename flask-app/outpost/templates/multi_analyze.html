@@ -17,7 +17,7 @@
 <br><br>
 
 <div class="container">
-    <form method="POST" action="/multi_analyze" class="form-group">
+    <form method="POST" action="/generated_articles" class="form-group">
 
     <table style="margin-left:auto;margin-right:auto;">
       <tr>
@@ -25,46 +25,42 @@
         <th colspan="2" style="text-align:center"><p style="font-size:20px">Right Leaning Articles</p></th>
       </tr>
       <tr>
-        <th style="width:130px"><p style="font-size:15px">News Source</p></th>
-        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article Here</p></th>
-        <th style="width:130px"><p style="font-size:15px">News Source</p></th>
-        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article Here</p></th>
+        <th style="width:130px"><p style="font-size:15px">Link</p></th>
+        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article</p></th>
+        <th style="width:130px"><p style="font-size:15px">Link</p></th>
+        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article</p></th>
       </tr>
       <tr>
-        <td><textarea name="l_source1" cols="3" rows="3" class="form-control">{{l_source1}}</textarea></td>
-        <td><textarea name="l_text1" cols="3" rows="3" class="form-control">{{l_text1}}</textarea></td>
-        <td><textarea name="r_source1" cols="3" rows="3" class="form-control">{{r_source1}}</textarea></td>
-        <td><textarea name="r_text1" cols="3" rows="3" class="form-control">{{r_text1}}</textarea></td>
+        <td><textarea name="l_link1" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_text1" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_link1" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_text1" cols="3" rows="3" class="form-control"></textarea></td>
       </tr>
       <tr>
-        <td><textarea name="l_source2" cols="3" rows="3" class="form-control">{{l_source2}}</textarea></td>
-        <td><textarea name="l_text2" cols="3" rows="3" class="form-control">{{l_text2}}</textarea></td>
-        <td><textarea name="r_source2" cols="3" rows="3" class="form-control">{{r_source2}}</textarea></td>
-        <td><textarea name="r_text2" cols="3" rows="3" class="form-control">{{r_text2}}</textarea></td>
+        <td><textarea name="l_link2" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_text2" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_link2" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_text2" cols="3" rows="3" class="form-control"></textarea></td>
       </tr>
       <tr>
-        <td><textarea name="l_source3" cols="3" rows="3" class="form-control">{{l_source3}}</textarea></td>
-        <td><textarea name="l_text3" cols="3" rows="3" class="form-control">{{l_text3}}</textarea></td>
-        <td><textarea name="r_source3" cols="3" rows="3" class="form-control">{{r_source3}}</textarea></td>
-        <td><textarea name="r_text3" cols="3" rows="3" class="form-control">{{r_text3}}</textarea></td>
+        <td><textarea name="l_link3" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_text3" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_link3" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_text3" cols="3" rows="3" class="form-control"></textarea></td>
       </tr>
       <tr>
-        <td><textarea name="l_source4" cols="3" rows="3" class="form-control">{{l_source4}}</textarea></td>
-        <td><textarea name="l_text4" cols="3" rows="3" class="form-control">{{l_text4}}</textarea></td>
-        <td><textarea name="r_source4" cols="3" rows="3" class="form-control">{{r_source4}}</textarea></td>
-        <td><textarea name="r_text4" cols="3" rows="3" class="form-control">{{r_text4}}</textarea></td>
+        <td><textarea name="l_link4" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_text4" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_link4" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_text4" cols="3" rows="3" class="form-control"></textarea></td>
       </tr>
       <tr>
-        <td><textarea name="l_source5" cols="3" rows="3" class="form-control">{{l_source5}}</textarea></td>
-        <td><textarea name="l_text5" cols="3" rows="3" class="form-control">{{l_text5}}</textarea></td>
-        <td><textarea name="r_source5" cols="3" rows="3" class="form-control">{{r_source5}}</textarea></td>
-        <td><textarea name="r_text5" cols="3" rows="3" class="form-control">{{r_text5}}</textarea></td>
+        <td><textarea name="l_link5" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_text5" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_link5" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_text5" cols="3" rows="3" class="form-control"></textarea></td>
       </tr>
     </table>
-    <br><br>
-
-    <label for="num_subj_sent_sentences" style="font-size:15px">Number of Sentences to Output for Sentiment and Subjectivity Analysis:</label><br>
-    <input type="text" id="num_subj_sent_sentences" name="num_subj_sent_sentences" value={{num_subj_sent_sentences}}>
     <br><br>
 
     <button type="submit" class="btn btn-outline-primary">Submit</button>
@@ -77,480 +73,73 @@
 
 <br><br><br>
 <div class="container">
-    <h1>Results </h1>
+    <br><br>
+    <p>Total time: {{total_time}}</p>
+    <br><br>
+    <h1>Generated Articles:</h1>
     <br><br>
 
 
     <table style="margin-left:auto;margin-right:auto;">
         <tr>
-            <th colspan="2" style="text-align:center"><p style="font-size:20px">Generated Article:</p></th>
+            <th colspan="2"><p>Overall Summaries:</p></th>
         </tr>
         <tr>
-            <th colspan="2"><p>Overall Summary:</p></th>
+            <th colspan="2"><p>{{overall_summary1}}</p></th>
         </tr>
         <tr>
-            <th colspan="2"><p>{{overall_summary}}</p></th>
+            <th colspan="2"><p>{{overall_summary2}}</p></th>
         </tr>
         <tr>
-            <th style="text-align:center"><p style="font-size:20px">What the Left is saying</p></th>
-            <th style="text-align:center"><p style="font-size:20px">What the right is saying</p></th>
+            <th colspan="2"><p>{{overall_summary3}}</p></th>
+        </tr>
+        <tr>
+            <th style="text-align:center"><p style="font-size:20px">Left Summary 1</p></th>
+            <th style="text-align:center"><p style="font-size:20px">Right Summary 1</p></th>
         </tr>
 
         <tr>
             <td>
-                <p>{{left_summary}}</p>
+                <p>{{left_summary1}}</p>
             </td>
             <td>
-                <p>{{right_summary}}</p>
+                <p>{{right_summary1}}</p>
+            </td>
+        </tr>
+
+        <tr>
+            <th style="text-align:center"><p style="font-size:20px">Left Summary 2</p></th>
+            <th style="text-align:center"><p style="font-size:20px">Right Summary 2</p></th>
+        </tr>
+
+        <tr>
+            <td>
+                <p>{{left_summary2}}</p>
+            </td>
+            <td>
+                <p>{{right_summary2}}</p>
+            </td>
+        </tr>
+
+        <tr>
+            <th style="text-align:center"><p style="font-size:20px">Left Summary 3</p></th>
+            <th style="text-align:center"><p style="font-size:20px">Right Summary 3</p></th>
+        </tr>
+
+        <tr>
+            <td>
+                <p>{{left_summary3}}</p>
+            </td>
+            <td>
+                <p>{{right_summary3}}</p>
             </td>
         </tr>
 
     </table>
     <hr>
 
-
-
-    <table style="margin-left:auto;margin-right:auto;">
-        <tr>
-            <th colspan="2" style="text-align:center"><p style="font-size:20px">Most Quotable Sentences</p></th>
-        </tr>
-        <tr>
-            <th style="text-align:center"><p style="font-size:20px">Left Leaning Articles</p></th>
-            <th style="text-align:center"><p style="font-size:20px">Right Leaning Articles</p></th>
-        </tr>
-
-        <tr>
-            <td>
-                <label>Most Positive Sentences:</label>
-                {% for i in left_positive %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-            </td>
-            <td>
-                <label>Most Positive Sentences:</label>
-                {% for i in right_positive %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-            </td>
-        </tr>
-
-        <tr>
-            <td>
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in left_negative %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-            </td>
-            <td>
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in right_negative %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-            </td>
-        </tr>
-
-    </table>
     <br><br>
 
-
-    <div id="exTab1" class="container">
-        <!-- Define Each of the buttons of the tabs -->
-        <ul  class="nav nav-pills">
-            {% if l_source1 and l_text1 %}
-                <li class="active">
-                    <a  href="#1a" data-toggle="tab">{{l_source1}}</a>
-                </li>
-            {% endif %}
-            {% if l_source2 and l_text2 %}
-                <li>
-                    <a  href="#2a" data-toggle="tab">{{l_source2}}</a>
-                </li>
-            {% endif %}
-            {% if l_source3 and l_text3 %}
-                <li>
-                    <a  href="#3a" data-toggle="tab">{{l_source3}}</a>
-                </li>
-            {% endif %}
-            {% if l_source4 and l_text4 %}
-                <li>
-                    <a  href="#4a" data-toggle="tab">{{l_source4}}</a>
-                </li>
-            {% endif %}
-            {% if l_source5 and l_text5 %}
-                <li>
-                    <a  href="#5a" data-toggle="tab">{{l_source5}}</a>
-                </li>
-            {% endif %}
-            {% if r_source1 and r_text1 %}
-                <li>
-                    <a  href="#6a" data-toggle="tab">{{r_source1}}</a>
-                </li>
-            {% endif %}
-            {% if r_source2 and r_text2 %}
-                <li>
-                    <a  href="#7a" data-toggle="tab">{{r_source2}}</a>
-                </li>
-            {% endif %}
-            {% if r_source3 and r_text3 %}
-                <li>
-                    <a  href="#8a" data-toggle="tab">{{r_source3}}</a>
-                </li>
-            {% endif %}
-            {% if r_source4 and r_text4 %}
-                <li>
-                    <a  href="#9a" data-toggle="tab">{{r_source4}}</a>
-                </li>
-            {% endif %}
-            {% if r_source5 and r_text5 %}
-                <li>
-                    <a  href="#10a" data-toggle="tab">{{r_source5}}</a>
-                </li>
-            {% endif %}
-
-        </ul>
-
-        <br><br>
-
-
-        <!-- Content of Each of the tabs -->
-        <div class="tab-content clearfix">
-            <div class="tab-pane active" id="1a">
-
-                <p><b>Summary:</b></p>
-                <p>{{summary_l1}}</p>
-
-                <hr>
-                <p><b>Sentiment Analysis</b></p>
-                <label>Most Positive Sentences:</label>
-                {% for i in top_positive_l1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in top_negative_l1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-                <hr>
-                <p><b>Subjectivity Analysis</b></p>
-                <label>Most Subjective Sentences:</label>
-                {% for i in most_subjective_l1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Least Subjective Sentences:</label>
-                {% for i in least_subjective_l1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-            </div>
-
-            <div class="tab-pane active" id="2a">
-
-                <p><b>Summary:</b></p>
-                <p>{{summary_l2}}</p>
-
-                <hr>
-                <p><b>Sentiment Analysis</b></p>
-                <label>Most Positive Sentences:</label>
-                {% for i in top_positive_l2 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in top_negative_l2 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-                <hr>
-                <p><b>Subjectivity Analysis</b></p>
-                <label>Most Subjective Sentences:</label>
-                {% for i in most_subjective_l2 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Least Subjective Sentences:</label>
-                {% for i in least_subjective_l2 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-            </div>
-
-
-            <div class="tab-pane active" id="3a">
-
-                <p><b>Summary:</b></p>
-                <p>{{summary_l3}}</p>
-
-                <hr>
-                <p><b>Sentiment Analysis</b></p>
-                <label>Most Positive Sentences:</label>
-                {% for i in top_positive_l3 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in top_negative_l3 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-                <hr>
-                <p><b>Subjectivity Analysis</b></p>
-                <label>Most Subjective Sentences:</label>
-                {% for i in most_subjective_l3 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Least Subjective Sentences:</label>
-                {% for i in least_subjective_l3 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-            </div>
-
-            <div class="tab-pane active" id="4a">
-
-                <p><b>Summary:</b></p>
-                <p>{{summary_l4}}</p>
-
-                <hr>
-                <p><b>Sentiment Analysis</b></p>
-                <label>Most Positive Sentences:</label>
-                {% for i in top_positive_l4 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in top_negative_l4 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-                <hr>
-                <p><b>Subjectivity Analysis</b></p>
-                <label>Most Subjective Sentences:</label>
-                {% for i in most_subjective_l4 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Least Subjective Sentences:</label>
-                {% for i in least_subjective_l4 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-            </div>
-
-            <div class="tab-pane active" id="5a">
-
-                <p><b>Summary:</b></p>
-                <p>{{summary_l5}}</p>
-
-                <hr>
-                <p><b>Sentiment Analysis</b></p>
-                <label>Most Positive Sentences:</label>
-                {% for i in top_positive_l1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in top_negative_l1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-                <hr>
-                <p><b>Subjectivity Analysis</b></p>
-                <label>Most Subjective Sentences:</label>
-                {% for i in most_subjective_l1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Least Subjective Sentences:</label>
-                {% for i in least_subjective_l1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-            </div>
-
-            <div class="tab-pane active" id="6a">
-
-                <p><b>Summary:</b></p>
-                <p>{{summary_r1}}</p>
-
-                <hr>
-                <p><b>Sentiment Analysis</b></p>
-                <label>Most Positive Sentences:</label>
-                {% for i in top_positive_r1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in top_negative_r1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-                <hr>
-                <p><b>Subjectivity Analysis</b></p>
-                <label>Most Subjective Sentences:</label>
-                {% for i in most_subjective_r1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Least Subjective Sentences:</label>
-                {% for i in least_subjective_r1 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-            </div>
-
-
-            <div class="tab-pane active" id="7a">
-
-                <p><b>Summary:</b></p>
-                <p>{{summary_r2}}</p>
-
-                <hr>
-                <p><b>Sentiment Analysis</b></p>
-                <label>Most Positive Sentences:</label>
-                {% for i in top_positive_r2 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in top_negative_r2 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-                <hr>
-                <p><b>Subjectivity Analysis</b></p>
-                <label>Most Subjective Sentences:</label>
-                {% for i in most_subjective_r2 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Least Subjective Sentences:</label>
-                {% for i in least_subjective_r2 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-            </div>
-
-            <div class="tab-pane active" id="8a">
-
-                <p><b>Summary:</b></p>
-                <p>{{summary_r3}}</p>
-
-                <hr>
-                <p><b>Sentiment Analysis</b></p>
-                <label>Most Positive Sentences:</label>
-                {% for i in top_positive_r3 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in top_negative_r3 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-                <hr>
-                <p><b>Subjectivity Analysis</b></p>
-                <label>Most Subjective Sentences:</label>
-                {% for i in most_subjective_r3 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Least Subjective Sentences:</label>
-                {% for i in least_subjective_r3 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-            </div>
-
-
-            <div class="tab-pane active" id="9a">
-
-                <p><b>Summary:</b></p>
-                <p>{{summary_r4}}</p>
-
-                <hr>
-                <p><b>Sentiment Analysis</b></p>
-                <label>Most Positive Sentences:</label>
-                {% for i in top_positive_r4 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in top_negative_r4 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-                <hr>
-                <p><b>Subjectivity Analysis</b></p>
-                <label>Most Subjective Sentences:</label>
-                {% for i in most_subjective_r4 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Least Subjective Sentences:</label>
-                {% for i in least_subjective_r4 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-            </div>
-
-            <div class="tab-pane active" id="10a">
-
-                <p><b>Summary:</b></p>
-                <p>{{summary_r5}}</p>
-
-                <hr>
-                <p><b>Sentiment Analysis</b></p>
-                <label>Most Positive Sentences:</label>
-                {% for i in top_positive_r5 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Most Negative Sentences:</label>
-                {% for i in top_negative_r5 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-                <hr>
-                <p><b>Subjectivity Analysis</b></p>
-                <label>Most Subjective Sentences:</label>
-                {% for i in most_subjective_r5 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-                <br>
-                <label>Least Subjective Sentences:</label>
-                {% for i in least_subjective_r5 %}
-                <li><b>Score</b>:{{i[0]}}, <b>Sentence</b>: {{i[1]}}</li>
-                {% endfor %}
-
-
-            </div>
-        </div>
-
-    </div>
 
 
 </div>

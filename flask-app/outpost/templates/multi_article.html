@@ -17,7 +17,7 @@
 <br><br>
 
 <div class="container">
-    <form method="POST" action="/multi_analyze" class="form-group">
+    <form method="POST" action="/generated_articles" class="form-group">
 
     <table style="margin-left:auto;margin-right:auto;">
       <tr>
@@ -25,46 +25,42 @@
         <th colspan="2" style="text-align:center"><p style="font-size:20px">Right Leaning Articles</p></th>
       </tr>
       <tr>
-        <th style="width:130px"><p style="font-size:15px">News Source</p></th>
-        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article Here</p></th>
-        <th style="width:130px"><p style="font-size:15px">News Source</p></th>
-        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article Here</p></th>
+        <th style="width:130px"><p style="font-size:15px">Link</p></th>
+        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article</p></th>
+        <th style="width:130px"><p style="font-size:15px">Link</p></th>
+        <th style="width:400px"><p style="font-size:15px">Copy and Paste Article</p></th>
       </tr>
       <tr>
-        <td><textarea name="l_source1" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_link1" cols="3" rows="3" class="form-control"></textarea></td>
         <td><textarea name="l_text1" cols="3" rows="3" class="form-control"></textarea></td>
-        <td><textarea name="r_source1" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_link1" cols="3" rows="3" class="form-control"></textarea></td>
         <td><textarea name="r_text1" cols="3" rows="3" class="form-control"></textarea></td>
       </tr>
       <tr>
-        <td><textarea name="l_source2" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_link2" cols="3" rows="3" class="form-control"></textarea></td>
         <td><textarea name="l_text2" cols="3" rows="3" class="form-control"></textarea></td>
-        <td><textarea name="r_source2" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_link2" cols="3" rows="3" class="form-control"></textarea></td>
         <td><textarea name="r_text2" cols="3" rows="3" class="form-control"></textarea></td>
       </tr>
       <tr>
-        <td><textarea name="l_source3" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_link3" cols="3" rows="3" class="form-control"></textarea></td>
         <td><textarea name="l_text3" cols="3" rows="3" class="form-control"></textarea></td>
-        <td><textarea name="r_source3" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_link3" cols="3" rows="3" class="form-control"></textarea></td>
         <td><textarea name="r_text3" cols="3" rows="3" class="form-control"></textarea></td>
       </tr>
       <tr>
-        <td><textarea name="l_source4" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_link4" cols="3" rows="3" class="form-control"></textarea></td>
         <td><textarea name="l_text4" cols="3" rows="3" class="form-control"></textarea></td>
-        <td><textarea name="r_source4" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_link4" cols="3" rows="3" class="form-control"></textarea></td>
         <td><textarea name="r_text4" cols="3" rows="3" class="form-control"></textarea></td>
       </tr>
       <tr>
-        <td><textarea name="l_source5" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="l_link5" cols="3" rows="3" class="form-control"></textarea></td>
         <td><textarea name="l_text5" cols="3" rows="3" class="form-control"></textarea></td>
-        <td><textarea name="r_source5" cols="3" rows="3" class="form-control"></textarea></td>
+        <td><textarea name="r_link5" cols="3" rows="3" class="form-control"></textarea></td>
         <td><textarea name="r_text5" cols="3" rows="3" class="form-control"></textarea></td>
       </tr>
     </table>
-    <br><br>
-
-    <label for="num_subj_sent_sentences" style="font-size:15px">Number of Sentences to Output for Sentiment and Subjectivity Analysis:</label><br>
-    <input type="text" id="num_subj_sent_sentences" name="num_subj_sent_sentences">
     <br><br>
 
     <button type="submit" class="btn btn-outline-primary">Submit</button>
