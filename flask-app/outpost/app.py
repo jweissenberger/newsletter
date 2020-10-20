@@ -182,35 +182,45 @@ def multi_analyze():
                         right_summaries += run_tf_idf_summarization(clean, 6) + '||||'
 
         # generate left and right summaries
+        # pass the summaries into multi news
         left_summary1 = pegasus_summarization(text=left_summaries, model_name='google/pegasus-multi_news')
+        left_summary1 = plagiarism_checker(new_text=left_summary1, orig_text=left_text)
+
         right_summary1 = pegasus_summarization(text=right_summaries, model_name='google/pegasus-multi_news')
+        right_summary1 = plagiarism_checker(new_text=right_summary1, orig_text=right_text)
 
+        # pass the full text into multi news
         left_summary2 = pegasus_summarization(text=left_text, model_name='google/pegasus-multi_news')
-        right_summary2 = pegasus_summarization(text=right_text, model_name='google/pegasus-multi_news')
+        left_summary2 = plagiarism_checker(new_text=left_summary2, orig_text=left_text)
 
+        right_summary2 = pegasus_summarization(text=right_text, model_name='google/pegasus-multi_news')
+        right_summary2 = plagiarism_checker(new_text=right_summary2, orig_text=right_text)
+
+        # pass each article individually into multi news
         print(left_text.split('||||'))
         left_summary3 = ''
         for i in left_text.split('||||')[:-1]:
-            left_summary3 += pegasus_summarization(text=i, model_name='google/pegasus-multi_news') + '\n'
+            left_summary3 += pegasus_summarization(text=i, model_name='google/pegasus-multi_news') + '<br>'
+        left_summary3 = plagiarism_checker(new_text=left_summary3, orig_text=left_text)
 
         right_summary3 = ''
         for i in right_text.split('||||')[:-1]:
-            right_summary3 += pegasus_summarization(text=i, model_name='google/pegasus-multi_news') + '\n'
-
+            right_summary3 += pegasus_summarization(text=i, model_name='google/pegasus-multi_news') + '<br>'
+        right_summary3 = plagiarism_checker(new_text=right_summary3, orig_text=right_text)
 
         # generate overall summaries
         overall_summary1 = chunk_summarize_t5(left_summary1 + ' ' + right_summary1, size='large')
-        overall_summary2 = chunk_summarize_t5(right_summary2 + ' ' + left_summary2, size='large')
-        overall_summary3 = chunk_summarize_t5(left_summary3 + ' ' + right_summary3, size='large')
+        overall_summary1 = plagiarism_checker(new_text=overall_summary1, orig_text=right_text + ' ' + left_text)
 
+        overall_summary2 = chunk_summarize_t5(right_summary2 + ' ' + left_summary2, size='large')
+        overall_summary2 = plagiarism_checker(new_text=overall_summary2, orig_text=right_text + ' ' + left_text)
+
+        overall_summary3 = chunk_summarize_t5(left_summary3 + ' ' + right_summary3, size='large')
+        overall_summary3 = plagiarism_checker(new_text=overall_summary3, orig_text=right_text + ' ' + left_text)
 
         b = time.time()
 
-        # TODO: add plagiarism detection
-
-        total_time = b-a
-
-
+        total_time = (b-a)/60
 
     return render_template('multi_analyze.html', header=header, left_summary1=left_summary1, left_summary2=left_summary2,
                            left_summary3=left_summary3, right_summary1=right_summary1, right_summary2=right_summary2,
@@ -248,104 +258,6 @@ def plagiarism_result():
 
     return render_template('plagiarism.html', header=header, result=result,
                            result_url='/t5_result')
-
-
-# @app.route('/multi_news_result', methods=['GET', 'POST'])
-# def summarize_result():
-#     header = generate_header(summarizer='class="active"')
-#
-#     if request.method == 'POST':
-#         rawtext = request.form['rawtext']
-#         clean = clean_text(rawtext)
-#
-#         times = {}
-#
-#         a = time.time()
-#         summary = chunk_summarize_t5(clean, size='large')
-#         b = time.time()
-#         times['t5_time'] = b-a
-#
-#         large_summary = plagiarism_checker(new_text=summary, orig_text=clean)
-#
-#         # pegasus models
-#         models = ['google/pegasus-xsum', 'google/pegasus-multi_news']
-#         pegasus_models = {}
-#         for model in models:
-#             model_name = model.split('-')[-1]
-#
-#             a = time.time()
-#             summary = pegasus_summarization(text=clean, model_name=model)
-#             b = time.time()
-#             times[f'{model_name}_time'] = b-a
-#
-#             output = plagiarism_checker(new_text=summary, orig_text=clean)
-#             pegasus_models[model_name] = output
-#
-#     return render_template('summarize_result.html', header=header, rawtext=rawtext,
-#                            large_summary=large_summary, **pegasus_models, **times)
-#
-#
-# @app.route('/summarize_result', methods=['GET', 'POST'])
-# def summarize_result():
-#     header = generate_header(summarizer='class="active"')
-#
-#     if request.method == 'POST':
-#         rawtext = request.form['rawtext']
-#         clean = clean_text(rawtext)
-#
-#         times = {}
-#
-#         a = time.time()
-#         summary = chunk_summarize_t5(clean, size='large')
-#         b = time.time()
-#         times['t5_time'] = b-a
-#
-#         large_summary = plagiarism_checker(new_text=summary, orig_text=clean)
-#
-#         # pegasus models
-#         models = ['google/pegasus-xsum', 'google/pegasus-multi_news']
-#         pegasus_models = {}
-#         for model in models:
-#             model_name = model.split('-')[-1]
-#
-#             a = time.time()
-#             summary = pegasus_summarization(text=clean, model_name=model)
-#             b = time.time()
-#             times[f'{model_name}_time'] = b-a
-#
-#             output = plagiarism_checker(new_text=summary, orig_text=clean)
-#             pegasus_models[model_name] = output
-#
-#     return render_template('summarize_result.html', header=header, rawtext=rawtext,
-#                            large_summary=large_summary, **pegasus_models, **times)
-#
-#
-# @app.route('/single')
-# def single():
-#     header = generate_header(single='class="active"')
-#     return render_template('single.html', header=header)
-#
-#
-# @app.route('/analyze', methods=['GET', 'POST'])
-# def analyze():
-#     header = generate_header(single='class="active"')
-#     if request.method == 'POST':
-#         rawtext = request.form['rawtext']
-#
-#         rawtext = clean_text(rawtext)
-#
-#         summary = chunk_summarize_t5(rawtext)
-#
-#         most_subjective, least_subjective = textblob_topn_subjectivity(rawtext, num_sentences=int(request.form['num_subj_sent_sentences']))
-#
-#         top_positive, top_negative = flair_topn_sentiment(rawtext, num_sentences=int(request.form['num_subj_sent_sentences']))
-#
-#     return render_template('analyze.html', header=header, summary=summary,
-#                            most_subjective=most_subjective, least_subjective=least_subjective,
-#                            top_positive=top_positive, top_negative=top_negative)
-#
-#
-
 
 
 if __name__ == '__main__':

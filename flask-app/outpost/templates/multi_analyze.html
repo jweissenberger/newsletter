@@ -74,7 +74,7 @@
 <br><br><br>
 <div class="container">
     <br><br>
-    <p>Total time: {{total_time}}</p>
+    <p>Total time: {{total_time}} minutes</p>
     <br><br>
     <h1>Generated Articles:</h1>
     <br><br>
@@ -85,13 +85,13 @@
             <th colspan="2"><p>Overall Summaries:</p></th>
         </tr>
         <tr>
-            <th colspan="2"><p>{{overall_summary1}}</p></th>
+            <th colspan="2"><p>{{overall_summary1 | safe}}</p></th>
         </tr>
         <tr>
-            <th colspan="2"><p>{{overall_summary2}}</p></th>
+            <th colspan="2"><p>{{overall_summary2 | safe}}</p></th>
         </tr>
         <tr>
-            <th colspan="2"><p>{{overall_summary3}}</p></th>
+            <th colspan="2"><p>{{overall_summary3 | safe}}</p></th>
         </tr>
         <tr>
             <th style="text-align:center"><p style="font-size:20px">Left Summary 1</p></th>
@@ -100,10 +100,10 @@
 
         <tr>
             <td>
-                <p>{{left_summary1}}</p>
+                <p>{{left_summary1 | safe}}</p>
             </td>
             <td>
-                <p>{{right_summary1}}</p>
+                <p>{{right_summary1 | safe}}</p>
             </td>
         </tr>
 
@@ -114,10 +114,10 @@
 
         <tr>
             <td>
-                <p>{{left_summary2}}</p>
+                <p>{{left_summary2 | safe}}</p>
             </td>
             <td>
-                <p>{{right_summary2}}</p>
+                <p>{{right_summary2 | safe}}</p>
             </td>
         </tr>
 
@@ -128,10 +128,10 @@
 
         <tr>
             <td>
-                <p>{{left_summary3}}</p>
+                <p>{{left_summary3 | safe}}</p>
             </td>
             <td>
-                <p>{{right_summary3}}</p>
+                <p>{{right_summary3 | safe}}</p>
             </td>
         </tr>
 
