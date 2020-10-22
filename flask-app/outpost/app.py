@@ -189,13 +189,6 @@ def multi_analyze():
         right_summary1 = pegasus_summarization(text=right_summaries, model_name='google/pegasus-multi_news')
         right_summary1 = plagiarism_checker(new_text=right_summary1, orig_text=right_text)
 
-        # pass the full text into multi news
-        left_summary2 = pegasus_summarization(text=left_text, model_name='google/pegasus-multi_news')
-        left_summary2 = plagiarism_checker(new_text=left_summary2, orig_text=left_text)
-
-        right_summary2 = pegasus_summarization(text=right_text, model_name='google/pegasus-multi_news')
-        right_summary2 = plagiarism_checker(new_text=right_summary2, orig_text=right_text)
-
         # pass each article individually into multi news
         print(left_text.split('||||'))
         left_summary3 = ''
@@ -212,9 +205,6 @@ def multi_analyze():
         overall_summary1 = chunk_summarize_t5(left_summary1 + ' ' + right_summary1, size='large')
         overall_summary1 = plagiarism_checker(new_text=overall_summary1, orig_text=right_text + ' ' + left_text)
 
-        overall_summary2 = chunk_summarize_t5(right_summary2 + ' ' + left_summary2, size='large')
-        overall_summary2 = plagiarism_checker(new_text=overall_summary2, orig_text=right_text + ' ' + left_text)
-
         overall_summary3 = chunk_summarize_t5(left_summary3 + ' ' + right_summary3, size='large')
         overall_summary3 = plagiarism_checker(new_text=overall_summary3, orig_text=right_text + ' ' + left_text)
 
@@ -222,9 +212,9 @@ def multi_analyze():
 
         total_time = (b-a)/60
 
-    return render_template('multi_analyze.html', header=header, left_summary1=left_summary1, left_summary2=left_summary2,
-                           left_summary3=left_summary3, right_summary1=right_summary1, right_summary2=right_summary2,
-                           right_summary3=right_summary3, overall_summary1=overall_summary1, overall_summary2=overall_summary2,
+    return render_template('multi_analyze.html', header=header, left_summary1=left_summary1,
+                           left_summary3=left_summary3, right_summary1=right_summary1,
+                           right_summary3=right_summary3, overall_summary1=overall_summary1,
                            overall_summary3=overall_summary3, total_time=total_time,
                            **orig_text)
 
