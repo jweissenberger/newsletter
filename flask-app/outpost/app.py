@@ -190,7 +190,6 @@ def multi_analyze():
         right_summary1 = plagiarism_checker(new_text=right_summary1, orig_text=right_text)
 
         # pass each article individually into multi news
-        print(left_text.split('||||'))
         left_summary3 = ''
         for i in left_text.split('||||')[:-1]:
             left_summary3 += pegasus_summarization(text=i, model_name='google/pegasus-multi_news') + '<br>'

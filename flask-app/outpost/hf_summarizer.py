@@ -23,7 +23,7 @@ def summarize_t5(text, size='small'):
 
     model = T5ForConditionalGeneration.from_pretrained(f't5-{size}')
     tokenizer = T5Tokenizer.from_pretrained(f't5-{size}')
-    device = torch.device('cpu')
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     preprocess_text = text.strip().replace("\n","")
     t5_prepared_Text = "summarize: "+preprocess_text
