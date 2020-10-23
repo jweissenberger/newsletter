@@ -155,6 +155,7 @@ def multi_analyze():
         left_summaries = ''
         right_summaries = ''
 
+        print('Pull Article')
         # get right and left articles, summaries
         for s in ['l', 'r']:
             for i in range(5):
@@ -181,15 +182,15 @@ def multi_analyze():
                         right_text += clean + '||||'
                         right_summaries += run_tf_idf_summarization(clean, 6) + '||||'
 
-        # generate left and right summaries
-        # pass the summaries into multi news
+        print('generate left and right summaries')
+        print('pass the summaries into multi news')
         left_summary1 = pegasus_summarization(text=left_summaries, model_name='google/pegasus-multi_news')
         left_summary1 = plagiarism_checker(new_text=left_summary1, orig_text=left_text)
 
         right_summary1 = pegasus_summarization(text=right_summaries, model_name='google/pegasus-multi_news')
         right_summary1 = plagiarism_checker(new_text=right_summary1, orig_text=right_text)
 
-        # pass each article individually into multi news
+        print('pass each article individually into multi news')
         left_summary3 = ''
         for i in left_text.split('||||')[:-1]:
             left_summary3 += pegasus_summarization(text=i, model_name='google/pegasus-multi_news') + '<br>'
@@ -200,10 +201,12 @@ def multi_analyze():
             right_summary3 += pegasus_summarization(text=i, model_name='google/pegasus-multi_news') + '<br>'
         right_summary3 = plagiarism_checker(new_text=right_summary3, orig_text=right_text)
 
-        # generate overall summaries
+        print('generate overall summaries')
+        print('Summary 1')
         overall_summary1 = chunk_summarize_t5(left_summary1 + ' ' + right_summary1, size='large')
         overall_summary1 = plagiarism_checker(new_text=overall_summary1, orig_text=right_text + ' ' + left_text)
 
+        print('Summary 2')
         overall_summary3 = chunk_summarize_t5(left_summary3 + ' ' + right_summary3, size='large')
         overall_summary3 = plagiarism_checker(new_text=overall_summary3, orig_text=right_text + ' ' + left_text)
 
