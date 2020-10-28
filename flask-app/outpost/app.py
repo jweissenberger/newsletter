@@ -13,7 +13,7 @@ from statistical_summarize import run_tf_idf_summarization
 app = Flask(__name__)
 Bootstrap(app)
 
-VERSION = 'v0.1.0'
+VERSION = 'v0.1.1'
 
 
 def generate_header(t5='', xsum='', multi='', plag='', ext='', generate=''):
@@ -171,7 +171,7 @@ def multi_analyze():
                     else:
                         right_articles.append(article)
 
-        assert len(left_articles) > 1 and len(right_articles) > 1, "Must have a least one article from each side"
+        assert len(left_articles) >= 1 and len(right_articles) >= 1, "Must have a least one article from each side"
 
         overall_text = ''
         for i in range(len(left_articles)):
@@ -181,6 +181,7 @@ def multi_analyze():
 
         print('Generating left and right summaries')
         print('Pass two summaries at a time into multi news')
+        print("Right Summary")
         right_summary1 = ''
         for i in range(math.ceil(len(right_articles)/2)):
             if i*2 + 1 < len(right_articles):
@@ -194,6 +195,7 @@ def multi_analyze():
                     model_name='google/pegasus-multi_news'
                 )
 
+        print("Left Summary")
         left_summary1 = ''
         for i in range(math.ceil(len(left_articles) / 2)):
             if i * 2 + 1 < len(left_articles):
@@ -234,8 +236,10 @@ def multi_analyze():
             right_sums.append(summ)
             right_summary3 += summ
 
+        right_summary3 = plagiarism_checker(new_text=right_summary3, orig_text=overall_text)
+        left_summary3 = plagiarism_checker(new_text=left_summary3, orig_text=overall_text)
 
-        print('generate overall summaries')
+        print('Generate overall summaries')
         print('Summary 1')
         overall_summary1 = chunk_summarize_t5(left_summary1 + ' ' + right_summary1, size='large')
         overall_summary1 = plagiarism_checker(new_text=overall_summary1, orig_text=overall_text)
