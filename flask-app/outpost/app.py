@@ -45,7 +45,10 @@ def extraction_result():
     if request.method == 'POST':
         link = request.form['article_link']
 
-        results, summary, _ = return_single_article(link, output_type='html')
+        output = return_single_article(link, output_type='html')
+
+        results = output['article']
+        summary = output['summary']
 
     return render_template('extract.html', header=header, results=results, summary=summary)
 
@@ -163,7 +166,8 @@ def multi_analyze():
                 orig_text[f'{s}_link{i+1}'] = request.form[f'{s}_link{i+1}']
                 # if a link is given use newsarticle3k else parse the given text
                 if orig_text[f'{s}_link{i+1}']:
-                    article, summary, title = return_single_article(orig_text[f'{s}_link{i+1}'], output_type='string')
+                    art = return_single_article(orig_text[f'{s}_link{i+1}'], output_type='string')
+                    article, summary, title = art['article'], art['summary'], art['title']
                     if s == 'l':
                         left_summaries += summary + '||||'
                         left_text += article + '||||'
