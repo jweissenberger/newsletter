@@ -200,7 +200,7 @@ def multi_analyze():
         for i in range(math.ceil(len(left_articles) / 2)):
             if i * 2 + 1 < len(left_articles):
                 left_summary1 += ' \n ' + pegasus_summarization(
-                    text=left_articles[i * 2]['summary'] + ' |||| ' + left_articles[i * 2 + 1],
+                    text=left_articles[i * 2]['summary'] + ' |||| ' + left_articles[i * 2 + 1]['summary'],
                     model_name='google/pegasus-multi_news'
                 )
             else:
