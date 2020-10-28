@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template
 from flask_bootstrap import Bootstrap
 import time
+import math
+import random
 
 from hf_summarizer import chunk_summarize_t5, pegasus_summarization
 from common import sentence_tokenizer, plagiarism_checker, clean_text
@@ -150,15 +152,11 @@ def multi_analyze():
     if request.method == 'POST':
         a = time.time()
 
-        # TODO: title generation with xsum -> is it worth it right now? Would add an extra minute ish to this
-
         orig_text = {}
-        left_text = ''
-        right_text = ''
-        left_summaries = ''
-        right_summaries = ''
+        left_articles = []
+        right_articles = []
 
-        print('Pull Article')
+        print('Pull Articles')
         # get right and left articles, summaries
         for s in ['l', 'r']:
             for i in range(5):
@@ -166,53 +164,107 @@ def multi_analyze():
                 orig_text[f'{s}_link{i+1}'] = request.form[f'{s}_link{i+1}']
                 # if a link is given use newsarticle3k else parse the given text
                 if orig_text[f'{s}_link{i+1}']:
-                    art = return_single_article(orig_text[f'{s}_link{i+1}'], output_type='string')
-                    article, summary, title = art['article'], art['summary'], art['title']
+                    article = return_single_article(orig_text[f'{s}_link{i+1}'], output_type='string')
+                    print(f'Pulled from: {article["source"]}')
                     if s == 'l':
-                        left_summaries += summary + '||||'
-                        left_text += article + '||||'
+                        left_articles.append(article)
                     else:
-                        right_summaries += summary + '||||'
-                        right_text += article + '||||'
+                        right_articles.append(article)
 
-                elif request.form[f'{s}_text{i+1}']:
-                    orig_text[f'{s}_text{i + 1}'] = request.form[f'{s}_text{i+1}']
+        assert len(left_articles) > 1 and len(right_articles) > 1, "Must have a least one article from each side"
 
-                    clean = clean_text(orig_text[f'{s}_text{i + 1}'])
-                    if s == 'l':
-                        left_text += clean + '||||'
-                        left_summaries += run_tf_idf_summarization(clean, 6) + '||||'
-                    else:
-                        right_text += clean + '||||'
-                        right_summaries += run_tf_idf_summarization(clean, 6) + '||||'
+        overall_text = ''
+        for i in range(len(left_articles)):
+            overall_text += ' \n ' + left_articles[i]['article']
+        for i in range(len(right_articles)):
+            overall_text += ' \n ' + right_articles[i]['article']
 
-        print('generate left and right summaries')
-        print('pass the summaries into multi news')
-        left_summary1 = pegasus_summarization(text=left_summaries, model_name='google/pegasus-multi_news')
-        left_summary1 = plagiarism_checker(new_text=left_summary1, orig_text=left_text)
+        print('Generating left and right summaries')
+        print('Pass two summaries at a time into multi news')
+        right_summary1 = ''
+        for i in range(math.ceil(len(right_articles)/2)):
+            if i*2 + 1 < len(right_articles):
+                right_summary1 += ' \n ' + pegasus_summarization(
+                    text=right_articles[i * 2]['summary'] + ' |||| ' + right_articles[i*2 + 1],
+                    model_name='google/pegasus-multi_news'
+                )
+            else:
+                right_summary1 += ' \n ' + pegasus_summarization(
+                    text=right_articles[i * 2]['summary'],
+                    model_name='google/pegasus-multi_news'
+                )
 
-        right_summary1 = pegasus_summarization(text=right_summaries, model_name='google/pegasus-multi_news')
-        right_summary1 = plagiarism_checker(new_text=right_summary1, orig_text=right_text)
+        left_summary1 = ''
+        for i in range(math.ceil(len(left_articles) / 2)):
+            if i * 2 + 1 < len(left_articles):
+                left_summary1 += ' \n ' + pegasus_summarization(
+                    text=left_articles[i * 2]['summary'] + ' |||| ' + left_articles[i * 2 + 1],
+                    model_name='google/pegasus-multi_news'
+                )
+            else:
+                left_summary1 += ' \n ' + pegasus_summarization(
+                    text=left_articles[i * 2]['summary'],
+                    model_name='google/pegasus-multi_news'
+                )
 
-        print('pass each article individually into multi news')
+        left_summary1 = plagiarism_checker(new_text=left_summary1, orig_text=overall_text)
+        right_summary1 = plagiarism_checker(new_text=right_summary1, orig_text=overall_text)
+
+        print('Pass each article individually into multi news')
+        left_sums = []
         left_summary3 = ''
-        for i in left_text.split('||||')[:-1]:
-            left_summary3 += pegasus_summarization(text=i, model_name='google/pegasus-multi_news') + '<br>'
-        left_summary3 = plagiarism_checker(new_text=left_summary3, orig_text=left_text)
+        for i in range(len(left_articles)):
+            print(f'Left article {i}')
+            summ = ' \n ' + left_articles[i]['source'] + ': ' + pegasus_summarization(
+                text=left_articles[i]['article'],
+                model_name='google/pegasus-multi_news'
+            )
+            left_sums.append(summ)
+            left_summary3 += summ
 
+        right_sums = []
         right_summary3 = ''
-        for i in right_text.split('||||')[:-1]:
-            right_summary3 += pegasus_summarization(text=i, model_name='google/pegasus-multi_news') + '<br>'
-        right_summary3 = plagiarism_checker(new_text=right_summary3, orig_text=right_text)
+        for i in range(len(right_articles)):
+            print(f'Right article {i}')
+            summ = ' \n ' + right_articles[i]['source'] + ': ' + pegasus_summarization(
+                text=right_articles[i]['article'],
+                model_name='google/pegasus-multi_news'
+            )
+
+            right_sums.append(summ)
+            right_summary3 += summ
+
 
         print('generate overall summaries')
         print('Summary 1')
         overall_summary1 = chunk_summarize_t5(left_summary1 + ' ' + right_summary1, size='large')
-        overall_summary1 = plagiarism_checker(new_text=overall_summary1, orig_text=right_text + ' ' + left_text)
+        overall_summary1 = plagiarism_checker(new_text=overall_summary1, orig_text=overall_text)
 
         print('Summary 2')
-        overall_summary3 = chunk_summarize_t5(left_summary3 + ' ' + right_summary3, size='large')
-        overall_summary3 = plagiarism_checker(new_text=overall_summary3, orig_text=right_text + ' ' + left_text)
+        if min(len(right_articles), len(left_articles)) > 2:
+            # randomly choose two from each side to summarize
+            text_to_summarize = ''
+            for i in range(2):
+                art1 = random.choice(right_sums)
+                right_sums.remove(art1)
+                art2 = random.choice(left_sums)
+                left_sums.remove(art2)
+                text_to_summarize += art1 + ' |||| ' + art2 + ' |||| '
+                overall_summary3 = pegasus_summarization(
+                    text=text_to_summarize,
+                    model_name='google/pegasus-multi_news'
+                )
+
+        else:
+            # randomly choose one from each side to summarize together
+            art1 = random.choice(right_sums)
+            art2 = random.choice(left_sums)
+            text_to_summarize = art1 + ' |||| ' + art2 + ' |||| '
+            overall_summary3 = pegasus_summarization(
+                    text=text_to_summarize,
+                    model_name='google/pegasus-multi_news'
+                )
+        overall_summary3 = plagiarism_checker(new_text=overall_summary3, orig_text=overall_text)
 
         b = time.time()
 
