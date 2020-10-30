@@ -20,8 +20,24 @@ def bart_summarize(text):
 
     return bart_sum
 
-#def chunk_bart(text):
-# break up text into chunks of 10 sentences
+
+def chunk_bart(text):
+    """
+    Chunks text into 10 sentence pieces and does bart summarize on them
+    :param text:
+    :return:
+    """
+    sentences = sentence_tokenizer(text)
+
+    if len(sentences) > 40:
+        text = run_tf_idf_summarization(text, 40)
+        sentences = sentence_tokenizer(text)
+
+    output = ''
+    for chunk in divide_chunks(sentences, 10):
+        output += bart_summarize(" ".join(chunk))
+
+    return output
 
 
 def summarize_t5(text, size='small'):

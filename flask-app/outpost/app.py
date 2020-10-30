@@ -4,10 +4,10 @@ import time
 import math
 import random
 
-from hf_summarizer import chunk_summarize_t5, pegasus_summarization
+from hf_summarizer import chunk_summarize_t5, pegasus_summarization, chunk_bart
 from common import sentence_tokenizer, plagiarism_checker, clean_text
 from scraping import return_single_article
-from statistical_summarize import run_tf_idf_summarization
+from statistical_summarize import run_tf_idf_summarization, run_word_frequency_summarization
 
 # Initialize App
 app = Flask(__name__)
@@ -151,13 +151,6 @@ def multi_analyze():
     header = generate_header(generate='class="active"')
     if request.method == 'POST':
 
-        # TODO take in number of sentences for tf idf and word frequency summaries
-        # chunk summaries with bart
-        # split things in half and do CNN-dailymail
-        # I guess no overall summaries for right now (could use single good source)
-
-        # below doesn't work
-
         a = time.time()
 
         orig_text = {}
@@ -187,106 +180,62 @@ def multi_analyze():
         for i in range(len(right_articles)):
             overall_text += ' \n ' + right_articles[i]['article']
 
-        print('Generating left and right summaries')
-        print('Pass two summaries at a time into multi news')
-        print("Right Summary")
+
+        num_sentences = request.form['num_sentences']
+
+        print('TF IDF Summaries')
+        print("Right Summaries")
         right_summary1 = ''
-        for i in range(math.ceil(len(right_articles)/2)):
-            if i*2 + 1 < len(right_articles):
-                right_summary1 += ' \n ' + pegasus_summarization(
-                    text=right_articles[i * 2]['summary'] + ' |||| ' + right_articles[i*2 + 1]['summary'],
-                    model_name='google/pegasus-multi_news'
-                )
-            else:
-                right_summary1 += ' \n ' + pegasus_summarization(
-                    text=right_articles[i * 2]['summary'],
-                    model_name='google/pegasus-multi_news'
-                )
-
-        print("Left Summary")
+        for i in right_articles:
+            right_summary1 += i['source'] + run_tf_idf_summarization(i['article'], num_sentences) + '<br>'
+        print("Left Summaries")
         left_summary1 = ''
-        for i in range(math.ceil(len(left_articles) / 2)):
-            if i * 2 + 1 < len(left_articles):
-                left_summary1 += ' \n ' + pegasus_summarization(
-                    text=left_articles[i * 2]['summary'] + ' |||| ' + left_articles[i * 2 + 1]['summary'],
-                    model_name='google/pegasus-multi_news'
-                )
-            else:
-                left_summary1 += ' \n ' + pegasus_summarization(
-                    text=left_articles[i * 2]['summary'],
-                    model_name='google/pegasus-multi_news'
-                )
+        for i in left_articles:
+            left_summary1 += i['source'] + run_tf_idf_summarization(i['article'], num_sentences) + '<br>'
 
-        left_summary1 = plagiarism_checker(new_text=left_summary1, orig_text=overall_text)
-        right_summary1 = plagiarism_checker(new_text=right_summary1, orig_text=overall_text)
+        print('Word Frequency Summaries')
+        print("Right Summaries")
+        right_summary2 = ''
+        for i in right_articles:
+            right_summary2 += i['source'] + run_word_frequency_summarization(i['article'], num_sentences) + '<br>'
+        print("Left Summaries")
+        left_summary2 = ''
+        for i in left_articles:
+            left_summary2 += i['source'] + run_word_frequency_summarization(i['article'], num_sentences) + '<br>'
 
-        print('Pass each article individually into multi news')
-        left_sums = []
-        left_summary3 = ''
-        for i in range(len(left_articles)):
-            print(f'Left article {i}')
-            summ = ' \n ' + left_articles[i]['source'] + ': ' + pegasus_summarization(
-                text=left_articles[i]['article'],
-                model_name='google/pegasus-multi_news'
-            )
-            left_sums.append(summ)
-            left_summary3 += summ
-
-        right_sums = []
+        print('Bart Summaries')
+        print("Right Summaries")
         right_summary3 = ''
-        for i in range(len(right_articles)):
-            print(f'Right article {i}')
-            summ = ' \n ' + right_articles[i]['source'] + ': ' + pegasus_summarization(
-                text=right_articles[i]['article'],
-                model_name='google/pegasus-multi_news'
-            )
+        for i in right_articles:
+            sum = chunk_bart(i['article'])
+            right_summary3 += i['source'] + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
+        print("Left Summaries")
+        left_summary3 = ''
+        for i in left_articles:
+            sum = chunk_bart(i['article'])
+            left_summary3 += i['source'] + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
 
-            right_sums.append(summ)
-            right_summary3 += summ
-
-        right_summary3 = plagiarism_checker(new_text=right_summary3, orig_text=overall_text)
-        left_summary3 = plagiarism_checker(new_text=left_summary3, orig_text=overall_text)
-
-        print('Generate overall summaries')
-        print('Summary 1')
-        overall_summary1 = chunk_summarize_t5(left_summary1 + ' ' + right_summary1, size='large')
-        overall_summary1 = plagiarism_checker(new_text=overall_summary1, orig_text=overall_text)
-
-        print('Summary 2')
-        if min(len(right_articles), len(left_articles)) > 2:
-            # randomly choose two from each side to summarize
-            text_to_summarize = ''
-            for i in range(2):
-                art1 = random.choice(right_sums)
-                right_sums.remove(art1)
-                art2 = random.choice(left_sums)
-                left_sums.remove(art2)
-                text_to_summarize += art1 + ' |||| ' + art2 + ' |||| '
-                overall_summary3 = pegasus_summarization(
-                    text=text_to_summarize,
-                    model_name='google/pegasus-multi_news'
-                )
-
-        else:
-            # randomly choose one from each side to summarize together
-            art1 = random.choice(right_sums)
-            art2 = random.choice(left_sums)
-            text_to_summarize = art1 + ' |||| ' + art2 + ' |||| '
-            overall_summary3 = pegasus_summarization(
-                    text=text_to_summarize,
-                    model_name='google/pegasus-multi_news'
-                )
-        overall_summary3 = plagiarism_checker(new_text=overall_summary3, orig_text=overall_text)
+        print('Pegasus Summaries')
+        print("Right Summaries")
+        right_summary4 = ''
+        for i in right_articles:
+            sum = pegasus_summarization(text=i['article'], model_name='google/pegasus-cnn_dailymail')
+            right_summary4 += i['source'] + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
+        print("Left Summaries")
+        left_summary4 = ''
+        for i in left_articles:
+            sum = pegasus_summarization(text=i['article'], model_name='google/pegasus-cnn_dailymail')
+            left_summary4 += i['source'] + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
 
         b = time.time()
 
         total_time = (b-a)/60
 
     return render_template('multi_analyze.html', header=header, left_summary1=left_summary1,
-                           left_summary3=left_summary3, right_summary1=right_summary1,
-                           right_summary3=right_summary3, overall_summary1=overall_summary1,
-                           overall_summary3=overall_summary3, total_time=total_time,
-                           **orig_text)
+                           left_summary2=left_summary2, left_summary3=left_summary3, left_summary4=left_summary4,
+                           right_summary1=right_summary1, right_summary2=right_summary2, right_summary3=right_summary3,
+                           right_summary4=right_summary4, total_time=total_time
+                           )
 
 
 @app.route('/')

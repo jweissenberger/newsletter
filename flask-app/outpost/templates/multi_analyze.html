@@ -50,6 +50,9 @@
       </tr>
     </table>
     <br><br>
+    <label for="num_sentences">Number of Sentences to Output for Sentiment and Subjectivity:</label><br>
+    <input type="text" id="num_sentences" name="num_sentences">
+    <br><br>
 
     <button type="submit" class="btn btn-outline-primary">Submit</button>
 
@@ -69,15 +72,6 @@
 
 
     <table style="margin-left:auto;margin-right:auto;">
-        <tr>
-            <th colspan="2"><p>Overall Summaries:</p></th>
-        </tr>
-        <tr>
-            <th colspan="2"><p>{{overall_summary1 | safe}}</p></th>
-        </tr>
-        <tr>
-            <th colspan="2"><p>{{overall_summary3 | safe}}</p></th>
-        </tr>
         <tr>
             <th style="text-align:center"><p style="font-size:20px">Left Summary 1</p></th>
             <th style="text-align:center"><p style="font-size:20px">Right Summary 1</p></th>
@@ -99,10 +93,38 @@
 
         <tr>
             <td>
+                <p>{{left_summary2 | safe}}</p>
+            </td>
+            <td>
+                <p>{{right_summary2 | safe}}</p>
+            </td>
+        </tr>
+
+        <tr>
+            <th style="text-align:center"><p style="font-size:20px">Left Summary 3</p></th>
+            <th style="text-align:center"><p style="font-size:20px">Right Summary 3</p></th>
+        </tr>
+
+        <tr>
+            <td>
                 <p>{{left_summary3 | safe}}</p>
             </td>
             <td>
                 <p>{{right_summary3 | safe}}</p>
+            </td>
+        </tr>
+
+        <tr>
+            <th style="text-align:center"><p style="font-size:20px">Left Summary 4</p></th>
+            <th style="text-align:center"><p style="font-size:20px">Right Summary 4</p></th>
+        </tr>
+
+        <tr>
+            <td>
+                <p>{{left_summary4 | safe}}</p>
+            </td>
+            <td>
+                <p>{{right_summary4 | safe}}</p>
             </td>
         </tr>
 

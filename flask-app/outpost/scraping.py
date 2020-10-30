@@ -117,7 +117,8 @@ def return_single_article(link, output_type='string'):
     article.nlp()
     summary = f'{source}:{new_line}{article.title}{new_line}{by_line}{new_line}{article.summary}'
 
-    output['article'] = results
+    output['cleaned_article'] = results
+    output['article'] = article.text
     output['summary'] = summary
     output['title'] = article.title
     output['authors'] = by_line
