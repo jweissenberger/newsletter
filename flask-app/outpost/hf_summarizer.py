@@ -12,6 +12,10 @@ def bart_summarize(text):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     inputs = tokenizer([text], return_tensors='pt').to(device)
 
+    if inputs['input_ids'].shape[1] > 1024:
+        sentences = sentence_tokenizer(text)
+        return bart_summarize(run_tf_idf_summarization(text, len(sentences)-1))
+
     summary_ids = model.generate(inputs['input_ids'])
     bart_sum = tokenizer.batch_decode(summary_ids, skip_special_tokens=True)
 
@@ -35,7 +39,9 @@ def chunk_bart(text):
 
     output = ''
     for chunk in divide_chunks(sentences, 10):
-        output += bart_summarize(" ".join(chunk))
+        part = " ".join(chunk)
+
+        output += bart_summarize(part)
 
     return output
 
