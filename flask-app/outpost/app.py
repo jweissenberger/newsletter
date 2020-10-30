@@ -150,6 +150,14 @@ def t5_result():
 def multi_analyze():
     header = generate_header(generate='class="active"')
     if request.method == 'POST':
+
+        # TODO take in number of sentences for tf idf and word frequency summaries
+        # chunk summaries with bart
+        # split things in half and do CNN-dailymail
+        # I guess no overall summaries for right now (could use single good source)
+
+        # below doesn't work
+
         a = time.time()
 
         orig_text = {}

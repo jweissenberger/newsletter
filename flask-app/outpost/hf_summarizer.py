@@ -3,7 +3,25 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 import math
 from common import sentence_tokenizer
 from statistical_summarize import run_tf_idf_summarization, run_word_frequency_summarization
-from transformers import PegasusForConditionalGeneration, PegasusTokenizer
+from transformers import PegasusForConditionalGeneration, PegasusTokenizer, AutoTokenizer, AutoModelForSeq2SeqLM
+
+
+def bart_summarize(text):
+    tokenizer = AutoTokenizer.from_pretrained("sshleifer/distilbart-cnn-12-6")
+    model = AutoModelForSeq2SeqLM.from_pretrained("sshleifer/distilbart-cnn-12-6")
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    inputs = tokenizer([text], return_tensors='pt').to(device)
+
+    summary_ids = model.generate(inputs['input_ids'])
+    bart_sum = tokenizer.batch_decode(summary_ids, skip_special_tokens=True)
+
+    if type(bart_sum) is list:
+        bart_sum = bart_sum[0]
+
+    return bart_sum
+
+#def chunk_bart(text):
+# break up text into chunks of 10 sentences
 
 
 def summarize_t5(text, size='small'):
@@ -106,6 +124,13 @@ def chunks(l, n):
         yield l[si:si+(d+1 if i < r else d)]
 
 
+def divide_chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+
 def pegasus_summarization(text, model_name):
 
     if type(text) != list:
@@ -129,19 +154,10 @@ def pegasus_summarization(text, model_name):
 
 if __name__ == '__main__':
 
-    file = open("fox.txt", "r")
-    text = file.read()
-    file.close()
+    l = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
 
-    pegasus_models = ['google/pegasus-xsum', 'google/pegasus-newsroom', 'google/pegasus-cnn_dailymail',
-              'google/pegasus-multi_news', 'google/pegasus-gigaword']
-
-    print('\n\n\nLarge:\n', chunk_summarize_t5(text, size='large'), '\n\n\n')
-    print('\n\n\nSmall:\n', chunk_summarize_t5(text, size='small'), '\n\n\n')
-    print('\n\n\nLarge TFIDF:\n', tfidf_summarize_t5(text, size='large'), '\n\n\n')
-    print('\n\n\nSmall TFIDF:\n', tfidf_summarize_t5(text, size='small'), '\n\n\n')
-    print('\n\n\nLarge WF:\n', word_frequency_summarize_t5(text, size='large'), '\n\n\n')
-    print('\n\n\nSmall WF:\n', word_frequency_summarize_t5(text, size='small'), '\n\n\n')
+    for i in divide_chunks(l, 10):
+        print(i)
 
 
 

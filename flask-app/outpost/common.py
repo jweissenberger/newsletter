@@ -42,7 +42,6 @@ def sentence_tokenizer(text):
 
 def plagiarism_checker(new_text, orig_text):
 
-    # TODO, plagiarism not counting quotes
     # TODO, fix handling of quotes not being attributed
 
     new_text = new_text.lower()
