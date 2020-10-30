@@ -13,7 +13,7 @@ from statistical_summarize import run_tf_idf_summarization, run_word_frequency_s
 app = Flask(__name__)
 Bootstrap(app)
 
-VERSION = 'v0.1.1'
+VERSION = 'v0.1.2'
 
 
 def generate_header(t5='', xsum='', multi='', plag='', ext='', generate=''):
