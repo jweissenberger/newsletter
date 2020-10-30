@@ -217,7 +217,7 @@ def multi_analyze():
         left_summary3 = ''
         for i in range(len(left_articles)):
             print(f'Left article {i}')
-            summ = ' \n ' + str(left_articles[i]['source']) + ': ' + pegasus_summarization(
+            summ = ' \n ' + left_articles[i]['source'] + ': ' + pegasus_summarization(
                 text=left_articles[i]['article'],
                 model_name='google/pegasus-multi_news'
             )
@@ -228,7 +228,7 @@ def multi_analyze():
         right_summary3 = ''
         for i in range(len(right_articles)):
             print(f'Right article {i}')
-            summ = ' \n ' + str(right_articles[i]['source']) + ': ' + pegasus_summarization(
+            summ = ' \n ' + right_articles[i]['source'] + ': ' + pegasus_summarization(
                 text=right_articles[i]['article'],
                 model_name='google/pegasus-multi_news'
             )

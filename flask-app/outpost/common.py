@@ -4,13 +4,26 @@ from nltk.tokenize import sent_tokenize
 def sentence_tokenizer(text):
     """
     Sentence tokenizer
-    :param text:
+    :param text: string of text to be separated by sentences
     :return: list of sentences
     """
-    # TODO needs to change how we do quotes
     text = text.replace('*', '')
     text = text.replace('-', '')
     text = text.replace('#', '')
+
+    # keep quotes together
+    in_quote = False
+    new_text = ''
+    for char in text:
+        if char == '"':
+            in_quote = not in_quote
+
+        if in_quote and char == '.':
+            new_text += '<quote_period>'
+        else:
+            new_text += char
+    text = new_text
+
     sentences = sent_tokenize(text)
 
     output = []
@@ -20,6 +33,9 @@ def sentence_tokenizer(text):
             continue
         else:
             output.append(sentence)
+
+    for i in range(len(output)):
+        output[i] = output[i].replace('<quote_period>', '.')
 
     return output
 
