@@ -13,6 +13,7 @@ def bart_summarize(text):
     inputs = tokenizer([text], return_tensors='pt').to(device)
 
     if inputs['input_ids'].shape[1] > 1024:
+        del inputs
         sentences = sentence_tokenizer(text)
         return bart_summarize(run_tf_idf_summarization(text, len(sentences)-1))
 
@@ -172,14 +173,3 @@ def pegasus_summarization(text, model_name):
         tgt_text = temp
 
     return tgt_text
-
-
-if __name__ == '__main__':
-
-    l = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
-
-    for i in divide_chunks(l, 10):
-        print(i)
-
-
-

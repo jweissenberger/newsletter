@@ -13,7 +13,7 @@ from statistical_summarize import run_tf_idf_summarization, run_word_frequency_s
 app = Flask(__name__)
 Bootstrap(app)
 
-VERSION = 'v0.1.2'
+VERSION = 'v0.1.3'
 
 
 def generate_header(t5='', xsum='', multi='', plag='', ext='', generate=''):
@@ -207,11 +207,13 @@ def multi_analyze():
         print("Right Summaries")
         right_summary3 = ''
         for i in right_articles:
+            print(i['source'])
             sum = chunk_bart(i['article'])
             right_summary3 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
         print("Left Summaries")
         left_summary3 = ''
         for i in left_articles:
+            print(i['source'])
             sum = chunk_bart(i['article'])
             left_summary3 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
 
@@ -219,11 +221,13 @@ def multi_analyze():
         print("Right Summaries")
         right_summary4 = ''
         for i in right_articles:
+            print(i['source'])
             sum = pegasus_summarization(text=i['article'], model_name='google/pegasus-cnn_dailymail')
             right_summary4 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
         print("Left Summaries")
         left_summary4 = ''
         for i in left_articles:
+            print(i['source'])
             sum = pegasus_summarization(text=i['article'], model_name='google/pegasus-cnn_dailymail')
             left_summary4 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
 

@@ -181,11 +181,14 @@ def _generate_summary_topn(sentences, sentenceValue, n):
 
 
 def run_word_frequency_summarization(text, num_sentences):
-    # Create the word frequency table
-    freq_table = _create_frequency_table(text)
 
     # Tokenize the sentences
     sentences = sentence_tokenizer(text)
+    if len(sentences) <= num_sentences:
+        return text
+
+    # Create the word frequency table
+    freq_table = _create_frequency_table(text)
 
     # Important Algorithm: score the sentences
     sentence_scores = _score_sentences_frequency(sentences, freq_table)
@@ -204,6 +207,9 @@ def run_tf_idf_summarization(text, num_sentences):
 
     # Sentence Tokenize
     sentences = sentence_tokenizer(text)
+    if len(sentences) <= num_sentences:
+        return text
+
     total_documents = len(sentences)
 
     # Create the Frequency matrix of the words in each sentence.
