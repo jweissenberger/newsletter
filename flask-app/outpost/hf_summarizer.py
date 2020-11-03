@@ -9,14 +9,15 @@ from transformers import PegasusForConditionalGeneration, PegasusTokenizer, Auto
 def bart_summarize(text):
     tokenizer = AutoTokenizer.from_pretrained("sshleifer/distilbart-cnn-12-6")
     model = AutoModelForSeq2SeqLM.from_pretrained("sshleifer/distilbart-cnn-12-6")
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    inputs = tokenizer([text], return_tensors='pt').to(device)
+    inputs = tokenizer([text])
 
     if inputs['input_ids'].shape[1] > 1024:
         del inputs
         sentences = sentence_tokenizer(text)
         return bart_summarize(run_tf_idf_summarization(text, len(sentences)-1))
 
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    inputs = tokenizer([text], return_tensors='pt').to(device)
     summary_ids = model.generate(inputs['input_ids'])
     bart_sum = tokenizer.batch_decode(summary_ids, skip_special_tokens=True)
 
