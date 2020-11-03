@@ -35,8 +35,8 @@ def chunk_bart(text):
     """
     sentences = sentence_tokenizer(text)
 
-    if len(sentences) > 40:
-        text = run_tf_idf_summarization(text, 40)
+    if len(sentences) > 20:
+        text = run_tf_idf_summarization(text, 20)
         sentences = sentence_tokenizer(text)
 
     output = ''

@@ -187,21 +187,21 @@ def multi_analyze():
         print("Right Summaries")
         right_summary1 = ''
         for i in right_articles:
-            right_summary1 += i['source'] + ': ' + run_tf_idf_summarization(i['article'], num_sentences) + '<br>'
+            right_summary1 += i['source'] + ': ' + run_tf_idf_summarization(i['article'], num_sentences) + '<br><br>'
         print("Left Summaries")
         left_summary1 = ''
         for i in left_articles:
-            left_summary1 += i['source'] + ': ' + run_tf_idf_summarization(i['article'], num_sentences) + '<br>'
+            left_summary1 += i['source'] + ': ' + run_tf_idf_summarization(i['article'], num_sentences) + '<br><br>'
 
         print('Word Frequency Summaries')
         print("Right Summaries")
         right_summary2 = ''
         for i in right_articles:
-            right_summary2 += i['source'] + ': ' + run_word_frequency_summarization(i['article'], num_sentences) + '<br>'
+            right_summary2 += i['source'] + ': ' + run_word_frequency_summarization(i['article'], num_sentences) + '<br><br>'
         print("Left Summaries")
         left_summary2 = ''
         for i in left_articles:
-            left_summary2 += i['source'] + ': ' + run_word_frequency_summarization(i['article'], num_sentences) + '<br>'
+            left_summary2 += i['source'] + ': ' + run_word_frequency_summarization(i['article'], num_sentences) + '<br><br>'
 
         print('Bart Summaries')
         print("Right Summaries")
@@ -209,13 +209,13 @@ def multi_analyze():
         for i in right_articles:
             print(i['source'])
             sum = chunk_bart(i['article'])
-            right_summary3 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
+            right_summary3 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br><br>'
         print("Left Summaries")
         left_summary3 = ''
         for i in left_articles:
             print(i['source'])
             sum = chunk_bart(i['article'])
-            left_summary3 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
+            left_summary3 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br><br>'
 
         print('Pegasus Summaries')
         print("Right Summaries")
@@ -223,13 +223,13 @@ def multi_analyze():
         for i in right_articles:
             print(i['source'])
             sum = pegasus_summarization(text=i['article'], model_name='google/pegasus-cnn_dailymail')
-            right_summary4 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
+            right_summary4 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br><br>'
         print("Left Summaries")
         left_summary4 = ''
         for i in left_articles:
             print(i['source'])
             sum = pegasus_summarization(text=i['article'], model_name='google/pegasus-cnn_dailymail')
-            left_summary4 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br>'
+            left_summary4 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br><br>'
 
         b = time.time()
 
