@@ -165,6 +165,7 @@ def multi_analyze():
                 orig_text[f'{s}_link{i+1}'] = request.form[f'{s}_link{i+1}']
                 # if a link is given use newsarticle3k else parse the given text
                 if orig_text[f'{s}_link{i+1}']:
+                    # TODO add a try and except block around this incase the article pulling doesn't work
                     article = return_single_article(orig_text[f'{s}_link{i+1}'], output_type='string')
                     print(f'Pulled from: {article["source"]}')
                     if s == 'l':

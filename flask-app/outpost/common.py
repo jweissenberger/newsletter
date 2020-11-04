@@ -108,6 +108,8 @@ def plagiarism_checker(new_text, orig_text):
     percent_plagiarism = (words_plagiarized / len(splits)) * 100
     output = f'Percent Plagiarism: {percent_plagiarism}%<br>' + output
 
+    #TODO fix capitalization with sentence tokenizer
+
     return output
 
 

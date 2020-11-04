@@ -11,7 +11,7 @@ def bart_summarize(text):
     model = AutoModelForSeq2SeqLM.from_pretrained("sshleifer/distilbart-cnn-12-6")
     inputs = tokenizer([text])
 
-    if inputs['input_ids'].shape[1] > 1024:
+    if len(inputs['input_ids'][0]) > 1024:
         del inputs
         sentences = sentence_tokenizer(text)
         return bart_summarize(run_tf_idf_summarization(text, len(sentences)-1))
