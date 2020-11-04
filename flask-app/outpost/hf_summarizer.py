@@ -16,8 +16,7 @@ def bart_summarize(text):
         sentences = sentence_tokenizer(text)
         return bart_summarize(run_tf_idf_summarization(text, len(sentences)-1))
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    inputs = tokenizer([text], return_tensors='pt').to(device)
+    inputs = tokenizer([text], return_tensors='pt')
     summary_ids = model.generate(inputs['input_ids'])
     bart_sum = tokenizer.batch_decode(summary_ids, skip_special_tokens=True)
 

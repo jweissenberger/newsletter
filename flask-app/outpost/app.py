@@ -6,7 +6,7 @@ import random
 
 from hf_summarizer import chunk_summarize_t5, pegasus_summarization, chunk_bart
 from common import sentence_tokenizer, plagiarism_checker, clean_text
-from scraping import return_single_article
+from scraping import return_single_article, source_from_url
 from statistical_summarize import run_tf_idf_summarization, run_word_frequency_summarization
 
 # Initialize App
@@ -165,8 +165,12 @@ def multi_analyze():
                 orig_text[f'{s}_link{i+1}'] = request.form[f'{s}_link{i+1}']
                 # if a link is given use newsarticle3k else parse the given text
                 if orig_text[f'{s}_link{i+1}']:
-                    # TODO add a try and except block around this incase the article pulling doesn't work
-                    article = return_single_article(orig_text[f'{s}_link{i+1}'], output_type='string')
+                    try:
+                        article = return_single_article(orig_text[f'{s}_link{i+1}'], output_type='string')
+                    except:
+                        source = source_from_url(orig_text[f'{s}_link{i+1}'])
+                        article = {'source': source, 'article': "Unable to pull article from this source"}
+
                     print(f'Pulled from: {article["source"]}')
                     if s == 'l':
                         left_articles.append(article)

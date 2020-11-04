@@ -54,6 +54,18 @@ def overall_scraper():
     df.to_csv('articles.csv', index=False)
 
 
+def source_from_url(link):
+
+    if 'www' in link:
+        source = link.split('.')[1]
+    else:
+        if '.com' in link:
+            source = link.split('.com')[0]
+        else:
+            source = link.split('.')[0]
+    return source
+
+
 def return_single_article(link, output_type='string'):
     """
 
@@ -64,13 +76,7 @@ def return_single_article(link, output_type='string'):
 
     output = {}
 
-    if 'www' in link:
-        source = link.split('.')[1]
-    else:
-        if '.com' in link:
-            source = link.split('.com')[0]
-        else:
-            source = link.split('.')[0]
+    source = source_from_url(link=link)
     source = source.replace('https://', '')
     source = source.replace('http://', '')
     source_names = {'foxnews': 'Fox News',
