@@ -11,7 +11,7 @@ from statistical_summarize import run_tf_idf_summarization, run_word_frequency_s
 app = Flask(__name__)
 Bootstrap(app)
 
-VERSION = 'v0.1.3'
+VERSION = 'v0.1.4'
 
 
 def generate_header(t5='', xsum='', multi='', plag='', ext='', generate=''):
@@ -154,11 +154,16 @@ def output_article_generation():
         orig_text = {}
         left_articles = []
         right_articles = []
+        center_articles = []
 
         print('Pull Articles')
         # get right and left articles, summaries
-        for s in ['l', 'r']:
-            for i in range(5):
+        for s in ['l', 'r', 'c']:
+            if s == 'c':
+                length = 2
+            else:
+                length = 5
+            for i in range(length):
 
                 orig_text[f'{s}_link{i+1}'] = request.form[f'{s}_link{i+1}']
                 # if a link is given use newsarticle3k else parse the given text
@@ -173,20 +178,21 @@ def output_article_generation():
                     print(f'Pulled from: {article["source"]}')
                     if s == 'l':
                         left_articles.append(article)
-                    else:
+                    if s == 'r':
                         right_articles.append(article)
-
-        overall_text = ''
-        for i in range(len(left_articles)):
-            overall_text += ' \n ' + left_articles[i]['article']
-        for i in range(len(right_articles)):
-            overall_text += ' \n ' + right_articles[i]['article']
+                    if s == 'c':
+                        center_articles.append(article)
 
 
         num_sentences = int(request.form['num_sentences'])
 
         right_summaries = article_generator(articles=right_articles, num_sentences=num_sentences, article_type='Right')
         left_summaries = article_generator(articles=left_articles, num_sentences=num_sentences, article_type='Left')
+        center_summaries = article_generator(articles=center_articles, num_sentences=num_sentences, article_type='Center')
+
+        center_html = ''
+        for i in center_summaries.keys():
+            center_html += center_summaries[i] + "<br><br>"
 
         right_and_left_html = '<table style="margin-left:auto;margin-right:auto;">'
 
@@ -218,7 +224,7 @@ def output_article_generation():
 
         total_time = (b-a)/60
 
-    return render_template('multi_analyze.html', header=header, total_time=total_time,
+    return render_template('multi_analyze.html', header=header, total_time=total_time, center_html=center_html,
                            right_and_left_html=right_and_left_html
                            )
 
@@ -231,7 +237,7 @@ def article_generator(articles, num_sentences=7, article_type='Central'):
     :param article_type: string:  Left, Right or Central
     :return: Dictionary containing strings of each of the 4 summaries for each article in the list of articles
     """
-
+    # TODO this should probably just be a list not a dictionary
     print(f"{article_type} Summaries")
     summaries = {}
     for index, value in enumerate(articles):

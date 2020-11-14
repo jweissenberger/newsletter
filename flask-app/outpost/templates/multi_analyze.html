@@ -16,8 +16,14 @@
 
 <br><br>
 
-<div class="container">
+<div class="container" style="text-align:center">
     <form method="POST" action="/generated_articles" class="form-group">
+
+    <label for="c_link1" style="font-size:20px">Links for Unbiased Articles</label><br>
+    <input type="text" id="c_link1" name="c_link1">
+    <br>
+    <input type="text" id="c_link2" name="c_link2">
+    <br><br><br>
 
     <table style="margin-left:auto;margin-right:auto;">
       <tr>
@@ -71,6 +77,8 @@
     <br><br>
     <h1>Generated Articles:</h1>
     <br><br>
+
+    {{center_html | safe }}
 
     {{right_and_left_html | safe}}
 
