@@ -63,6 +63,8 @@ def source_from_url(link):
             source = link.split('.com')[0]
         else:
             source = link.split('.')[0]
+    source = source.replace('https://', '')
+    source = source.replace('http://', '')
     return source
 
 
@@ -77,8 +79,6 @@ def return_single_article(link, output_type='string'):
     output = {}
 
     source = source_from_url(link=link)
-    source = source.replace('https://', '')
-    source = source.replace('http://', '')
     source_names = {'foxnews': 'Fox News',
                     'brietbart': 'Brietbart',
                     'wsj': 'Wall Street Journal',

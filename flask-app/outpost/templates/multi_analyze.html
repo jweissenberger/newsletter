@@ -67,70 +67,13 @@
     <br><br>
     <p>Total time: {{total_time}} minutes</p>
     <br><br>
-    <p>The first two summaries are completely extracted and the second two are mostly extractive</p>
+    <p>The first two summaries of each article are completely extracted and the second two are mostly extractive</p>
     <br><br>
     <h1>Generated Articles:</h1>
     <br><br>
 
+    {{right_and_left_html | safe}}
 
-    <table style="margin-left:auto;margin-right:auto;">
-        <tr>
-            <th style="text-align:center"><p style="font-size:20px">Left Summary 1</p></th>
-            <th style="text-align:center"><p style="font-size:20px">Right Summary 1</p></th>
-        </tr>
-
-        <tr>
-            <td>
-                <p>{{left_summary1 | safe}}</p>
-            </td>
-            <td>
-                <p>{{right_summary1 | safe}}</p>
-            </td>
-        </tr>
-
-        <tr>
-            <th style="text-align:center"><p style="font-size:20px">Left Summary 2</p></th>
-            <th style="text-align:center"><p style="font-size:20px">Right Summary 2</p></th>
-        </tr>
-
-        <tr>
-            <td>
-                <p>{{left_summary2 | safe}}</p>
-            </td>
-            <td>
-                <p>{{right_summary2 | safe}}</p>
-            </td>
-        </tr>
-
-        <tr>
-            <th style="text-align:center"><p style="font-size:20px">Left Summary 3</p></th>
-            <th style="text-align:center"><p style="font-size:20px">Right Summary 3</p></th>
-        </tr>
-
-        <tr>
-            <td>
-                <p>{{left_summary3 | safe}}</p>
-            </td>
-            <td>
-                <p>{{right_summary3 | safe}}</p>
-            </td>
-        </tr>
-
-        <tr>
-            <th style="text-align:center"><p style="font-size:20px">Left Summary 4</p></th>
-            <th style="text-align:center"><p style="font-size:20px">Right Summary 4</p></th>
-        </tr>
-
-        <tr>
-            <td>
-                <p>{{left_summary4 | safe}}</p>
-            </td>
-            <td>
-                <p>{{right_summary4 | safe}}</p>
-            </td>
-        </tr>
-
-    </table>
     <hr>
 
     <br><br>

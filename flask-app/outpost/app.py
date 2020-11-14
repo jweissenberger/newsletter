@@ -1,8 +1,6 @@
 from flask import Flask, request, render_template
 from flask_bootstrap import Bootstrap
 import time
-import math
-import random
 
 from hf_summarizer import chunk_summarize_t5, pegasus_summarization, chunk_bart
 from common import sentence_tokenizer, plagiarism_checker, clean_text
@@ -147,7 +145,7 @@ def t5_result():
 
 
 @app.route('/generated_articles', methods=['GET', 'POST'])
-def multi_analyze():
+def output_article_generation():
     header = generate_header(generate='class="active"')
     if request.method == 'POST':
 
@@ -170,14 +168,13 @@ def multi_analyze():
                     except:
                         source = source_from_url(orig_text[f'{s}_link{i+1}'])
                         article = {'source': source, 'article': "Unable to pull article from this source"}
+                        print("Failed to pull article from", source)
 
                     print(f'Pulled from: {article["source"]}')
                     if s == 'l':
                         left_articles.append(article)
                     else:
                         right_articles.append(article)
-
-        assert len(left_articles) >= 1 and len(right_articles) >= 1, "Must have a least one article from each side"
 
         overall_text = ''
         for i in range(len(left_articles)):
@@ -188,67 +185,79 @@ def multi_analyze():
 
         num_sentences = int(request.form['num_sentences'])
 
-        print('TF IDF Summaries')
-        print("Right Summaries")
-        right_summary1 = ''
-        for i in right_articles:
-            right_summary1 += i['source'] + ': ' + run_tf_idf_summarization(i['article'], num_sentences) + '<br><br>'
-        print("Left Summaries")
-        left_summary1 = ''
-        for i in left_articles:
-            left_summary1 += i['source'] + ': ' + run_tf_idf_summarization(i['article'], num_sentences) + '<br><br>'
+        right_summaries = article_generator(articles=right_articles, num_sentences=num_sentences, article_type='Right')
+        left_summaries = article_generator(articles=left_articles, num_sentences=num_sentences, article_type='Left')
 
-        print('Word Frequency Summaries')
-        print("Right Summaries")
-        right_summary2 = ''
-        for i in right_articles:
-            right_summary2 += i['source'] + ': ' + run_word_frequency_summarization(i['article'], num_sentences) + '<br><br>'
-        print("Left Summaries")
-        left_summary2 = ''
-        for i in left_articles:
-            left_summary2 += i['source'] + ': ' + run_word_frequency_summarization(i['article'], num_sentences) + '<br><br>'
+        right_and_left_html = '<table style="margin-left:auto;margin-right:auto;">'
 
-        print('Bart Summaries')
-        print("Right Summaries")
-        right_summary3 = ''
-        for i in right_articles:
-            print(i['source'])
-            sum = chunk_bart(i['article'])
-            right_summary3 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br><br>'
-        print("Left Summaries")
-        left_summary3 = ''
-        for i in left_articles:
-            print(i['source'])
-            sum = chunk_bart(i['article'])
-            left_summary3 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br><br>'
+        max_articles = max(len(right_summaries.keys()), len(left_summaries.keys()))
+        for i in range(max_articles):
 
-        print('Pegasus Summaries')
-        print("Right Summaries")
-        right_summary4 = ''
-        for i in right_articles:
-            print(i['source'])
-            sum = pegasus_summarization(text=i['article'], model_name='google/pegasus-cnn_dailymail')
-            right_summary4 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br><br>'
-        print("Left Summaries")
-        left_summary4 = ''
-        for i in left_articles:
-            print(i['source'])
-            sum = pegasus_summarization(text=i['article'], model_name='google/pegasus-cnn_dailymail')
-            left_summary4 += i['source'] + ': ' + plagiarism_checker(new_text=sum, orig_text=i['article']) + '<br><br>'
+            right_and_left_html += f'<tr><th style="text-align:center"><p style="font-size:20px">Left Article {i+1}</p></th>' \
+                f'<th style="text-align:center"><p style="font-size:20px">Right Article {i+1}</p></th></tr>'
+
+            right_and_left_html += '<tr><td><p>'
+
+            if left_summaries.get(f'summary_{i}'):
+                right_and_left_html += left_summaries[f'summary_{i}']
+            else:
+                right_and_left_html += ' '
+
+            right_and_left_html += '</p></td><td><p>'
+
+            if right_summaries.get(f'summary_{i}'):
+                right_and_left_html += right_summaries[f'summary_{i}']
+            else:
+                right_and_left_html += ' '
+
+            right_and_left_html += '</p></td></tr>'
+
+        right_and_left_html += '</table>'
 
         b = time.time()
 
         total_time = (b-a)/60
 
-    return render_template('multi_analyze.html', header=header, left_summary1=left_summary1,
-                           left_summary2=left_summary2, left_summary3=left_summary3, left_summary4=left_summary4,
-                           right_summary1=right_summary1, right_summary2=right_summary2, right_summary3=right_summary3,
-                           right_summary4=right_summary4, total_time=total_time
+    return render_template('multi_analyze.html', header=header, total_time=total_time,
+                           right_and_left_html=right_and_left_html
                            )
 
 
+def article_generator(articles, num_sentences=7, article_type='Central'):
+    """
+
+    :param articles: list of dicts containing the articles
+    :param num_sentences: number of the sentences for the statistical summarizers
+    :param article_type: string:  Left, Right or Central
+    :return: Dictionary containing strings of each of the 4 summaries for each article in the list of articles
+    """
+
+    print(f"{article_type} Summaries")
+    summaries = {}
+    for index, value in enumerate(articles):
+
+        if value['article'] == "Unable to pull article from this source":
+            summaries[f'summary_{index}'] = "Failed to pull article :( "
+            continue
+
+        print(value['source'], 'TF IDF')
+        summaries[f'summary_{index}'] = f"<b>{value['source']}</b>:<br><br>{run_tf_idf_summarization(value['article'], num_sentences)}<br><br>"
+
+        print(value['source'], 'Word Frequency')
+        summaries[f'summary_{index}'] += run_word_frequency_summarization(value['article'], num_sentences) + '<br><br>'
+
+        print(value['source'], 'Bart Summary')
+        sum = chunk_bart(value['article'])
+        summaries[f'summary_{index}'] += plagiarism_checker(new_text=sum, orig_text=value['article']) + '<br><br>'
+
+        print(value['source'], 'Pegasus Summary')
+        sum = pegasus_summarization(text=value['article'], model_name='google/pegasus-cnn_dailymail')
+        summaries[f'summary_{index}'] += plagiarism_checker(new_text=sum, orig_text=value['article']) + '<br><br>'
+
+    return summaries
+
 @app.route('/')
-def multi_article():
+def article_generation():
     header = generate_header(generate='class="active"')
     return render_template('multi_article.html', header=header)
 
