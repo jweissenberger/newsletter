@@ -1,4 +1,12 @@
-from flask import Flask, request, render_template
+from flask import (
+    Flask,
+    g,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for
+)
 from flask_bootstrap import Bootstrap
 import time
 
@@ -9,144 +17,65 @@ from statistical_summarize import run_tf_idf_summarization, run_word_frequency_s
 
 # Initialize App
 app = Flask(__name__)
+app.secret_key = 'supersecretkeythatissolongthatnohackerwouldtryit'
 Bootstrap(app)
 
 VERSION = 'v0.1.4'
 
 
-def generate_header(t5='', xsum='', multi='', plag='', ext='', generate=''):
+def generate_header():
 
     # need to set what you want to 'class="active"'
     header = f'<div class="jumbotron text-center"><div class="container">' \
-             f'<h2>The Outpost News Article Analysis Tool {VERSION}</h2></div></div>'\
-             f'<div class="topnav">' \
-             f'<a {generate} href="/">Article Generation</a>' \
-             f'<a {multi} href="/multi_news">Multi Article Summary</a>' \
-             f'<a {xsum} href="/xsum">XSum Summary</a>' \
-             f'<a {t5} href="/t5">T5 Summary</a>' \
-             f'<a {plag} href="/plagiarism">Plagiarism Detection</a>' \
-             f'<a {ext} href="/extract">Article Extraction</a>' \
-             f'</div>'
+             f'<h2>The Outpost News Article Analysis Tool {VERSION}</h2></div></div>'
     return header
 
+class User:
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
 
-@app.route('/extract')
-def text_extraction():
+    def __repr__(self):
+        return f'<User: {self.username}>'
 
-    header = generate_header(ext='class="active"')  # update
+users = []
+users.append(User(id=1, username='jack', password='fixthislater'))
+users.append(User(id=2, username='tim', password='whatdovehuck'))
 
-    return render_template('extract.html', header=header, results='')
+@app.before_request
+def before_request():
+    g.user = None
+
+    if 'user_id' in session:
+        user = [x for x in users if x.id == session['user_id']][0]
+        g.user = user
 
 
-@app.route('/extract_results', methods=['GET', 'POST'])
-def extraction_result():
-    header = generate_header(ext='class="active"')
-
+@app.route('/', methods=['GET', 'POST'])
+def login():
     if request.method == 'POST':
-        link = request.form['article_link']
+        session.pop('user_id', None)
 
-        output = return_single_article(link, output_type='html')
+        username = request.form['username']
+        username = username.lower()
+        password = request.form['password']
 
-        results = output['article']
-        summary = output['summary']
+        user = [x for x in users if x.username == username][0]
+        if user and user.password == password:
+            session['user_id'] = user.id
+            return redirect(url_for('article_generation'))
 
-    return render_template('extract.html', header=header, results=results, summary=summary)
+        return redirect(url_for('login'))
 
-
-@app.route('/multi_news')
-def multi_news_summarize():
-
-    header = generate_header(multi='class="active"')  # update
-
-    return render_template('multi_news_summarize.html', header=header, summarizer="Multi Article",
-                           result_url='/multi_result')
-
-
-@app.route('/multi_result', methods=['GET', 'POST'])
-def multi_news_result():
-    header = generate_header(multi='class="active"')
-
-    if request.method == 'POST':
-        texts = []
-        orig_text = {}
-        for i in range(4):
-            temp = request.form[f'text{i+1}']
-            orig_text[f'text{i+1}'] = temp
-            texts.append(clean_text(temp))
-
-        clean = ''
-        for i in texts:
-            clean += i + '\n||||\n'
-
-        a = time.time()
-        summary = pegasus_summarization(text=clean, model_name='google/pegasus-multi_news')
-        b = time.time()
-        summary_time = b-a
-
-        output = plagiarism_checker(new_text=summary, orig_text=clean)
-
-    return render_template('multi_news_summarize_result.html', header=header,
-                           summary=output, time=summary_time, summarizer="Multi Article", **orig_text)
-
-
-@app.route('/xsum')
-def xsum_summarize():
-
-    header = generate_header(xsum='class="active"')  # update
-
-    return render_template('summarize.html', header=header, summarizer="Xsum",
-                           result_url='/xsum_result')
-
-
-@app.route('/xsum_result', methods=['GET', 'POST'])
-def xsum_result():
-    header = generate_header(xsum='class="active"')
-
-    if request.method == 'POST':
-        rawtext = request.form['rawtext']
-        clean = clean_text(rawtext)
-
-        a = time.time()
-        summary = pegasus_summarization(text=clean, model_name='google/pegasus-xsum')
-        b = time.time()
-        summary_time = b-a
-
-        output = plagiarism_checker(new_text=summary, orig_text=clean)
-
-    return render_template('summarize_result.html', header=header, rawtext=rawtext,
-                           summary=output, time=summary_time, summarizer="Xsum")
-
-@app.route('/t5')
-def t5_summarize():
-
-    header = generate_header(t5='class="active"')
-
-    return render_template('summarize.html', header=header, summarizer="T5",
-                           result_url='/t5_result')
-
-
-@app.route('/t5_result', methods=['GET', 'POST'])
-def t5_result():
-    header = generate_header(t5='class="active"')
-
-    if request.method == 'POST':
-        rawtext = request.form['rawtext']
-        clean = clean_text(rawtext)
-
-        a = time.time()
-        summary = chunk_summarize_t5(clean, size='large')
-        b = time.time()
-        summary_time = b-a
-
-        output = plagiarism_checker(new_text=summary, orig_text=clean)
-
-    return render_template('summarize_result.html', header=header, rawtext=rawtext,
-                           summary=output, time=summary_time, summarizer="T5")
+    return render_template('login.html')
 
 
 @app.route('/generated_articles', methods=['GET', 'POST'])
 def output_article_generation():
-    header = generate_header(generate='class="active"')
+    if not g.user:
+        return redirect(url_for('login'))
+    header = generate_header()
     if request.method == 'POST':
 
         a = time.time()
@@ -170,6 +99,7 @@ def output_article_generation():
                 if orig_text[f'{s}_link{i+1}']:
                     try:
                         article = return_single_article(orig_text[f'{s}_link{i+1}'], output_type='string')
+                        print(article['article'])
                     except:
                         source = source_from_url(orig_text[f'{s}_link{i+1}'])
                         article = {'source': source, 'article': "Unable to pull article from this source"}
@@ -193,6 +123,9 @@ def output_article_generation():
         center_html = ''
         for i in center_summaries.keys():
             center_html += center_summaries[i] + "<br><br>"
+
+        # TODO add article link below each summary
+        # TODO fix capitalization
 
         right_and_left_html = '<table style="margin-left:auto;margin-right:auto;">'
 
@@ -262,35 +195,12 @@ def article_generator(articles, num_sentences=7, article_type='Central'):
 
     return summaries
 
-@app.route('/')
+@app.route('/article_generation')
 def article_generation():
-    header = generate_header(generate='class="active"')
+    if not g.user:
+        return redirect(url_for('login'))
+    header = generate_header()
     return render_template('multi_article.html', header=header)
-
-
-@app.route('/plagiarism')
-def plagiarism():
-
-    header = generate_header(plag='class="active"')
-
-    return render_template('plagiarism.html', header=header, result='',
-                           result_url='/t5_result')
-
-@app.route('/plagiarism_result', methods=['GET', 'POST'])
-def plagiarism_result():
-
-    header = generate_header(plag='class="active"')
-
-    if request.method == 'POST':
-        orig = request.form['orig']
-        orig = clean_text(orig)
-        new = request.form['new']
-        new = clean_text(new)
-
-        result = plagiarism_checker(new_text=new, orig_text=orig)
-
-    return render_template('plagiarism.html', header=header, result=result,
-                           result_url='/t5_result')
 
 
 if __name__ == '__main__':

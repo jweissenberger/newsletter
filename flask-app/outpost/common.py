@@ -40,9 +40,23 @@ def sentence_tokenizer(text):
     return output
 
 
-def plagiarism_checker(new_text, orig_text):
+def capitalization_fix(text):
+    # sentence tokenizer
+    # first word of every sentence capitalize
+    words_to_replace = {
+        'biden': 'Biden',
+        'trump': 'Trump',
+        'u.s.': 'U.S.',
+        'harris': 'Harris',
+        'united states': 'United States',
+        'america': 'America'
+    }
+    # for word
+    return text
 
-    # TODO, fix handling of quotes not being attributed
+
+
+def plagiarism_checker(new_text, orig_text):
 
     new_text = new_text.lower()
     orig_text = orig_text.lower()
@@ -107,8 +121,6 @@ def plagiarism_checker(new_text, orig_text):
     # calculate % plagiarism
     percent_plagiarism = (words_plagiarized / len(splits)) * 100
     output = f'Percent Plagiarism: {percent_plagiarism}%<br>' + output
-
-    #TODO fix capitalization with sentence tokenizer
 
     return output
 
