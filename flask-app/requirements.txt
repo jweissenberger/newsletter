@@ -1,3 +1,7 @@
+nltk
+textblob
+sentencepiece
+tfds-nightly
 flask
 flask_bootstrap
 flair

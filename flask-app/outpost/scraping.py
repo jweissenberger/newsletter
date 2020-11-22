@@ -1,6 +1,6 @@
 import newspaper
 from newspaper import Article
-import pandas as pd
+#import pandas as pd
 
 
 def pull_articles_from_source(url, source, article_data=[]):
@@ -40,18 +40,18 @@ def pull_articles_from_source(url, source, article_data=[]):
     return article_data
 
 
-def overall_scraper():
-    sources = ['cnn', 'foxnews']
-
-    article_data = []
-
-    for i in sources:
-
-        article_data = pull_articles_from_source(url=f'https://{i}.com', source=i, article_data=article_data)
-
-    df = pd.DataFrame(article_data)
-
-    df.to_csv('articles.csv', index=False)
+# def overall_scraper():
+#     sources = ['cnn', 'foxnews']
+#
+#     article_data = []
+#
+#     for i in sources:
+#
+#         article_data = pull_articles_from_source(url=f'https://{i}.com', source=i, article_data=article_data)
+#
+#     df = pd.DataFrame(article_data)
+#
+#     df.to_csv('articles.csv', index=False)
 
 
 def source_from_url(link):
