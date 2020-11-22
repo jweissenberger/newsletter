@@ -1,4 +1,5 @@
 from transformers import PegasusForConditionalGeneration, PegasusTokenizer
+import nltk
 
 if __name__ == '__main__':
     #nltk

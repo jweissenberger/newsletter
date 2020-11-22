@@ -1,5 +1,4 @@
 nltk
-sentencepiece
 tfds-nightly
 flask
 flask_bootstrap
