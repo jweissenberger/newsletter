@@ -129,6 +129,7 @@ def return_single_article(link, output_type='string'):
     output['title'] = article.title
     output['authors'] = by_line
     output['source'] = source
+    output['url'] = link
 
     if output['article'].isspace() or not output['article']:
         output['article'] = "Unable to pull article from this source"

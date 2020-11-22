@@ -42,6 +42,7 @@ class User:
 users = []
 users.append(User(id=1, username='jack', password='fixthislater'))
 users.append(User(id=2, username='tim', password='whatdovehuck'))
+users.append(User(id=2, username='annie', password='Anegg'))
 
 @app.before_request
 def before_request():
@@ -99,7 +100,6 @@ def output_article_generation():
                 if orig_text[f'{s}_link{i+1}']:
                     try:
                         article = return_single_article(orig_text[f'{s}_link{i+1}'], output_type='string')
-                        print(article['article'])
                     except:
                         source = source_from_url(orig_text[f'{s}_link{i+1}'])
                         article = {'source': source, 'article': "Unable to pull article from this source"}
@@ -124,7 +124,6 @@ def output_article_generation():
         for i in center_summaries.keys():
             center_html += center_summaries[i] + "<br><br>"
 
-        # TODO add article link below each summary
         # TODO fix capitalization
 
         right_and_left_html = '<table style="margin-left:auto;margin-right:auto;">'
@@ -180,7 +179,9 @@ def article_generator(articles, num_sentences=7, article_type='Central'):
             continue
 
         print(value['source'], 'TF IDF')
-        summaries[f'summary_{index}'] = f"<b>{value['source']}</b>:<br><br>{run_tf_idf_summarization(value['article'], num_sentences)}<br><br>"
+        summaries[f'summary_{index}'] = f"<b>{value['source']}</b>:<br><br>" \
+                                        f"Link: {value['url']}<br><br>" \
+                                        f"{run_tf_idf_summarization(value['article'], num_sentences)}<br><br>"
 
         print(value['source'], 'Word Frequency')
         summaries[f'summary_{index}'] += run_word_frequency_summarization(value['article'], num_sentences) + '<br><br>'
