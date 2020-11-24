@@ -115,8 +115,7 @@ def output_article_generation():
                     if s == 'c':
                         center_articles.append(article)
 
-        # TODO: remove this
-        num_sentences = int(request.form['num_sentences'])
+        num_sentences = 6
 
         right_summaries = article_generator(articles=right_articles, num_sentences=num_sentences, article_type='Right')
         left_summaries = article_generator(articles=left_articles, num_sentences=num_sentences, article_type='Left')
