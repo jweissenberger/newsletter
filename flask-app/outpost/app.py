@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkeythatissolongthatnohackerwouldtryit'
 Bootstrap(app)
 
-VERSION = 'v0.1.4'
+VERSION = 'v0.1.5'
 
 
 def generate_header():
@@ -29,6 +29,7 @@ def generate_header():
     header = f'<div class="jumbotron text-center"><div class="container">' \
              f'<h2>The Outpost News Article Analysis Tool {VERSION}</h2></div></div>'
     return header
+
 
 class User:
     def __init__(self, id, username, password):

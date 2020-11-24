@@ -44,6 +44,8 @@ def chunk_bart(text):
 
         output += bart_summarize(part)
 
+    output = output.replace('<n>', ' ')
+
     return output
 
 
@@ -171,5 +173,7 @@ def pegasus_summarization(text, model_name):
         for i in tgt_text:
             temp += i + ''
         tgt_text = temp
+
+    tgt_text = tgt_text.replace('<n>', ' ')
 
     return tgt_text

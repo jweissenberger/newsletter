@@ -55,15 +55,11 @@ def capitalization_fix(text):
     return text
 
 
-
 def plagiarism_checker(new_text, orig_text):
-
-    new_text = new_text.lower()
-    orig_text = orig_text.lower()
 
     splits = new_text.split(' ')
 
-    new_plagiarism = {}  # key is the number of the word in orig text and value is binary for if pladgerized
+    new_plagiarism = {}  # key is the number of the word in orig text and value is binary for if plagiarized
     for i in range(len(splits)):
         new_plagiarism[i] = False
 
