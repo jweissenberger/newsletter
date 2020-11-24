@@ -14,6 +14,7 @@ from hf_summarizer import chunk_summarize_t5, pegasus_summarization, chunk_bart
 from common import sentence_tokenizer, plagiarism_checker, clean_text
 from scraping import return_single_article, source_from_url
 from statistical_summarize import run_tf_idf_summarization, run_word_frequency_summarization
+from sentiment_analysis import hf_topn_sentiment
 
 # Initialize App
 app = Flask(__name__)
@@ -114,7 +115,7 @@ def output_article_generation():
                     if s == 'c':
                         center_articles.append(article)
 
-
+        # TODO: remove this
         num_sentences = int(request.form['num_sentences'])
 
         right_summaries = article_generator(articles=right_articles, num_sentences=num_sentences, article_type='Right')
@@ -122,12 +123,12 @@ def output_article_generation():
         center_summaries = article_generator(articles=center_articles, num_sentences=num_sentences, article_type='Center')
 
         center_html = ''
-        for i in center_summaries.keys():
+        for i in center_summaries:
             center_html += center_summaries[i] + "<br><br>"
 
         right_and_left_html = '<table style="margin-left:auto;margin-right:auto;">'
 
-        max_articles = max(len(right_summaries.keys()), len(left_summaries.keys()))
+        max_articles = max(len(right_summaries), len(left_summaries))
         for i in range(max_articles):
 
             right_and_left_html += f'<tr><th style="text-align:center"><p style="font-size:20px">Left Article {i+1}</p></th>' \
@@ -135,15 +136,15 @@ def output_article_generation():
 
             right_and_left_html += '<tr><td><p>'
 
-            if left_summaries.get(f'summary_{i}'):
-                right_and_left_html += left_summaries[f'summary_{i}']
+            if left_summaries and i < len(left_summaries):
+                right_and_left_html += left_summaries[i]
             else:
                 right_and_left_html += ' '
 
             right_and_left_html += '</p></td><td><p>'
 
-            if right_summaries.get(f'summary_{i}'):
-                right_and_left_html += right_summaries[f'summary_{i}']
+            if right_summaries and i < len(right_summaries):
+                right_and_left_html += right_summaries[i]
             else:
                 right_and_left_html += ' '
 
@@ -168,33 +169,46 @@ def article_generator(articles, num_sentences=7, article_type='Central'):
     :param article_type: string:  Left, Right or Central
     :return: Dictionary containing strings of each of the 4 summaries for each article in the list of articles
     """
-    # TODO this should probably just be a list not a dictionary
+
     print(f"{article_type} Summaries")
-    summaries = {}
+    summaries = []
     for index, value in enumerate(articles):
 
         if value['article'] == "Unable to pull article from this source":
-            summaries[f'summary_{index}'] = "Failed to pull article :( "
+            summaries.append("Failed to pull article :( ")
             continue
 
         print(value['source'], 'Pegasus Summary')
         summ = pegasus_summarization(text=value['article'], model_name='google/pegasus-cnn_dailymail')
 
-        summaries[f'summary_{index}'] = f"<b>{value['source']}</b>:<br><br>" \
-                                        f"Link: {value['url']}<br><br>" \
-                                        f"{plagiarism_checker(new_text=summ, orig_text=value['article'])}<br><br>"
+        summaries.append(f"<b>{value['source']}</b>:<br><br>"
+                         f"Link: {value['url']}<br><br>"
+                         f"Author(s): {value['authors']}<br><br>"
+                         f"{plagiarism_checker(new_text=summ, orig_text=value['article'])}<br><br>"
+                         )
 
         print(value['source'], 'Bart Summary')
         summ = chunk_bart(value['article'])
-        summaries[f'summary_{index}'] += plagiarism_checker(new_text=summ, orig_text=value['article']) + '<br><br>'
+        summaries[-1] += plagiarism_checker(new_text=summ, orig_text=value['article']) + '<br><br>'
 
         print(value['source'], 'TF IDF')
-        summaries[f'summary_{index}'] += f"{run_tf_idf_summarization(value['article'], num_sentences)}<br><br>"
+        summaries[-1] += f"{run_tf_idf_summarization(value['article'], num_sentences)}<br><br>"
 
         print(value['source'], 'Word Frequency')
-        summaries[f'summary_{index}'] += run_word_frequency_summarization(value['article'], num_sentences) + '<br><br>'
+        summaries[-1] += run_word_frequency_summarization(value['article'], num_sentences) + '<br><br>'
+
+        print(value['source'], 'Sentiment Analysis')
+        top_positive, top_negative = hf_topn_sentiment(value['article'])
+        summaries[-1] += "Most Positive Sentences:<br>"
+        for i in top_positive:
+            summaries[-1] += i[1] + "<br>"
+
+        summaries[-1] += "<br><br>Most Negative Sentences:<br>"
+        for i in top_negative:
+            summaries[-1] += i[1] + "<br>"
 
     return summaries
+
 
 @app.route('/article_generation')
 def article_generation():
