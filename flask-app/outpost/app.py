@@ -125,8 +125,6 @@ def output_article_generation():
         for i in center_summaries.keys():
             center_html += center_summaries[i] + "<br><br>"
 
-        # TODO fix capitalization
-
         right_and_left_html = '<table style="margin-left:auto;margin-right:auto;">'
 
         max_articles = max(len(right_summaries.keys()), len(left_summaries.keys()))
@@ -179,21 +177,22 @@ def article_generator(articles, num_sentences=7, article_type='Central'):
             summaries[f'summary_{index}'] = "Failed to pull article :( "
             continue
 
-        print(value['source'], 'TF IDF')
+        print(value['source'], 'Pegasus Summary')
+        summ = pegasus_summarization(text=value['article'], model_name='google/pegasus-cnn_dailymail')
+
         summaries[f'summary_{index}'] = f"<b>{value['source']}</b>:<br><br>" \
                                         f"Link: {value['url']}<br><br>" \
-                                        f"{run_tf_idf_summarization(value['article'], num_sentences)}<br><br>"
+                                        f"{plagiarism_checker(new_text=summ, orig_text=value['article'])}<br><br>"
+
+        print(value['source'], 'Bart Summary')
+        summ = chunk_bart(value['article'])
+        summaries[f'summary_{index}'] += plagiarism_checker(new_text=summ, orig_text=value['article']) + '<br><br>'
+
+        print(value['source'], 'TF IDF')
+        summaries[f'summary_{index}'] += f"{run_tf_idf_summarization(value['article'], num_sentences)}<br><br>"
 
         print(value['source'], 'Word Frequency')
         summaries[f'summary_{index}'] += run_word_frequency_summarization(value['article'], num_sentences) + '<br><br>'
-
-        print(value['source'], 'Bart Summary')
-        sum = chunk_bart(value['article'])
-        summaries[f'summary_{index}'] += plagiarism_checker(new_text=sum, orig_text=value['article']) + '<br><br>'
-
-        print(value['source'], 'Pegasus Summary')
-        sum = pegasus_summarization(text=value['article'], model_name='google/pegasus-cnn_dailymail')
-        summaries[f'summary_{index}'] += plagiarism_checker(new_text=sum, orig_text=value['article']) + '<br><br>'
 
     return summaries
 
