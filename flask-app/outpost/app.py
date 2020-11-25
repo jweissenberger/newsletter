@@ -10,8 +10,8 @@ from flask import (
 from flask_bootstrap import Bootstrap
 import time
 
-from hf_summarizer import chunk_summarize_t5, pegasus_summarization, chunk_bart
-from common import sentence_tokenizer, plagiarism_checker, clean_text
+from hf_summarizer import pegasus_summarization, chunk_bart
+from common import new_text_checker
 from scraping import return_single_article, source_from_url
 from statistical_summarize import run_tf_idf_summarization, run_word_frequency_summarization
 from sentiment_analysis import hf_topn_sentiment
@@ -21,7 +21,7 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkeythatissolongthatnohackerwouldtryit'
 Bootstrap(app)
 
-VERSION = 'v0.1.5'
+VERSION = 'v0.1.6'
 
 
 def generate_header():
@@ -183,12 +183,12 @@ def article_generator(articles, num_sentences=7, article_type='Central'):
         summaries.append(f"<b>{value['source']}</b>:<br><br>"
                          f"Link: {value['url']}<br><br>"
                          f"Author(s): {value['authors']}<br><br>"
-                         f"{plagiarism_checker(new_text=summ, orig_text=value['article'])}<br><br>"
+                         f"{new_text_checker(new_text=summ, orig_text=value['article'])}<br><br>"
                          )
 
         print(value['source'], 'Bart Summary')
         summ = chunk_bart(value['article'])
-        summaries[-1] += plagiarism_checker(new_text=summ, orig_text=value['article']) + '<br><br>'
+        summaries[-1] += new_text_checker(new_text=summ, orig_text=value['article']) + '<br><br>'
 
         print(value['source'], 'TF IDF')
         summaries[-1] += f"{run_tf_idf_summarization(value['article'], num_sentences)}<br><br>"
