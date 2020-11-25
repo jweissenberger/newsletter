@@ -122,7 +122,7 @@ def output_article_generation():
         center_summaries = article_generator(articles=center_articles, num_sentences=num_sentences, article_type='Center')
 
         center_html = ''
-        for i in center_summaries:
+        for i in range(len(center_summaries)):
             center_html += center_summaries[i] + "<br><br>"
 
         right_and_left_html = '<table style="margin-left:auto;margin-right:auto;">'

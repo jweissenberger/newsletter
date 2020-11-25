@@ -249,8 +249,6 @@ def run_statistical_summarizers(text, num_sentences=10):
 
 if __name__ == '__main__':
 
-    # TODO create a clean text function that removes * and such
-
     file = open("fox.txt", "r")
     article = file.read()
     file.close()

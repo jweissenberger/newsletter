@@ -77,8 +77,7 @@ def plagiarism_checker(new_text, orig_text):
             for j in range(i, i+len_chunk+1):
                 new_plagiarism[j] = True
 
-    # print out
-    open = '<span style="color:red;">'
+    open_char = '<span style="color:red;">'
     close = '</span>'
     output = ''
     words_plagiarized = 0
@@ -88,12 +87,12 @@ def plagiarism_checker(new_text, orig_text):
 
         # first element is stolen
         if i == 0 and new_plagiarism[0]:
-            output += open + splits[i] + ' '
+            output += open_char + splits[i] + ' '
             continue
 
         # non first element is stolen (first of bunch)
         if new_plagiarism[i] and not new_plagiarism[i - 1]:
-            output += open + splits[i] + ' '
+            output += open_char + splits[i] + ' '
             continue
 
         # last element is stolen
@@ -121,11 +120,63 @@ def plagiarism_checker(new_text, orig_text):
     return output
 
 
+# def new_text_checker(new_text, orig_text):
+#     """
+#     Given new text and old text, puts any new words (those not directly quoted in brackets)
+#
+#     ex:
+#     new_text = 'Trump said, "Build the wall"'
+#     orig_text = '...said, "Build the wall"...'
+#
+#     would return -> '[Trump] said, "Build the wall"'
+#
+#     :param new_text:
+#     :param orig_text:
+#     :return:
+#     """
+#
+#     splits = new_text.split(' ')
+#
+#     new_plagiarism = {}  # key is the number of the word in orig text and value is binary for if plagiarized
+#     for i in range(len(splits)):
+#         new_plagiarism[i] = False
+#
+#     len_chunk = 3
+#     for i in range(len(splits) - len_chunk):
+#         chunk = splits[i:i+len_chunk]
+#
+#         chunk_text = ''
+#         for j in chunk:
+#             chunk_text += j + ' '
+#
+#         chunk_text = chunk_text.strip()
+#
+#         if chunk_text in orig_text:
+#             for j in range(i, i+len_chunk+1):
+#                 new_plagiarism[j] = True
+#
+#     open_char = '['
+#     close = ']'
+#     output = ''
+#     for i in range(len(splits)):
+#
+#         # first element is stolen
+#         if not new_plagiarism[i]:
+#             output += open_char + splits[i]
+#             continue
+#
+#         if new_plagiarism[i]:
+#
+#
+#
+#     return output
+
+
 def clean_text(text):
 
     text = text.replace('&', 'and')
 
-    allowed_symbols = ['"', "'", ' ', '$', ':', '.', '?', '!', '(', ')', '/', ';']
+    allowed_symbols = ['"', "'", ' ', '$', ':', '.', '?', '!', '(', ')', '/', ';']  # should be set for quicker check
 
     new_text = ""
     for char in text:
@@ -137,9 +188,9 @@ def clean_text(text):
 
 if __name__ == '__main__':
 
-    a = "This is a test text, I want to see if this works, it should because I am just going to copy and paste part fo it"
-    b = 'neither is this. I want to see if this works, it should because I am. but this part is not stolen This is a test text, I want'
+    a = "said this shit and then went to the park Trump said this shit and then went to the park"
+    b = 'said this shit and then went to the park'
 
-    print(plagiarism_checker(new_text=b, orig_text=a))
+    print(new_text_checker(new_text=a, orig_text=b))
 
 
