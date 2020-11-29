@@ -63,18 +63,14 @@ def plagiarism_checker(new_text, orig_text):
     for i in range(len(splits)):
         new_plagiarism[i] = False
 
-    len_chunk = 4
-    for i in range(len(splits) - len_chunk):
-        chunk = splits[i:i+len_chunk]
+    len_chunk = 3
+    for i in range(len(splits) + 1 - len_chunk):
+        chunk = splits[i:i + len_chunk]
 
-        chunk_text = ''
-        for j in chunk:
-            chunk_text += j + ' '
-
-        chunk_text = chunk_text.strip()
+        chunk_text = ' '.join(chunk)
 
         if chunk_text in orig_text:
-            for j in range(i, i+len_chunk+1):
+            for j in range(i, i + len_chunk):
                 new_plagiarism[j] = True
 
     open_char = '<span style="color:red;">'
@@ -157,7 +153,6 @@ def new_text_checker(new_text, orig_text):
 
         # case not plagiarized
         if not new_plagiarism[i]:
-            # if first element of list put [; continue
             if i == 0:
                 output += '[' + splits[i]
                 in_bracket = True
