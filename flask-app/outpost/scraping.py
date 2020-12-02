@@ -53,6 +53,50 @@ def source_from_url(link):
     return source
 
 
+def search_for_term(terms):
+
+    terms = terms.replace(',', '')
+    terms = terms.split(' ')
+
+    search_terms = []
+    for term in terms:
+        if term.isspace() or not term:
+            continue
+
+        search_terms.append(term.lower())
+
+    urls = ['https://www.cnn.com/', 'https://www.huffpost.com/', 'https://www.msnbc.com/', 'https://www.nytimes.com/',
+            'https://www.vox.com/', 'https://abcnews.go.com/', 'https://www.cbsnews.com/',
+            'https://www.washingtonpost.com/', 'https://www.politico.com/', 'https://apnews.com/', 'https://www.npr.org/'
+            ]
+    right_urls = ['https://www.foxnews.com/', 'https://www.theamericanconservative.com/', 'https://thedispatch.com/',
+                  'https://www.washingtonexaminer.com/', 'https://www.washingtonexaminer.com/', 'https://spectator.org/',
+                  'https://www.theblaze.com/', 'https://www.breitbart.com/', 'https://thefederalist.com/',
+                  'https://www.nationalreview.com/'
+                  ]
+
+    output_articles = []
+    max_articles_per_source = 4
+    for url in urls:
+        matching_articles = []
+        paper = newspaper.build(url)
+
+        for article in paper.articles:
+            if not article.title:
+                continue
+            matches = 0
+            for term in search_terms:
+                if term.lower() in article.title.lower():
+                    matches += 1
+            if matches > 0:
+                matching_articles.append((article, matches))
+
+        sorted(matching_articles, key=lambda x:x[1])
+
+        output_articles.append(matching_articles[:max_articles_per_source])
+
+    return output_articles
+
 def return_single_article(link, output_type='string'):
     """
 
