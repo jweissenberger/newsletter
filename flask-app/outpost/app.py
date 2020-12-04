@@ -18,7 +18,7 @@ from sentiment_analysis import hf_topn_sentiment
 
 # Initialize App
 app = Flask(__name__)
-app.secret_key = 'supersecretkeythatissolongthatnohackerwouldtryit'
+app.secret_key = 'supersecretkeythatissolongthatnohackerwouldtryit'  # TODO should be os.getenv()
 Bootstrap(app)
 
 VERSION = 'v0.1.6'
@@ -42,9 +42,9 @@ class User:
         return f'<User: {self.username}>'
 
 users = []
-users.append(User(id=1, username='jack', password='fixthislater'))
-users.append(User(id=2, username='tim', password='whatdovehuck'))
-users.append(User(id=2, username='annie', password='Anegg'))
+users.append(User(id=1, username='jack', password='fixthislater'))  # TODO should be os.getenv()
+users.append(User(id=2, username='tim', password='terriblyinsecure'))  # TODO should be os.getenv()
+users.append(User(id=2, username='annie', password='awfulpractice'))  # TODO should be os.getenv()
 
 @app.before_request
 def before_request():
