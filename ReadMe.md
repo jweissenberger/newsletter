@@ -33,7 +33,7 @@ Used for websraping and pulling the articles from a link
 - Finish scraping to pull from all of the sources
 - Store the scraped results in the flask session so we don't have to pull them more than once (ideally should be stored in a database)
 - Add a loading screen to scraping because each source it pulls from takes about 3 seconds
-- Add a celery task queue for article generation so that users to have to be hanging on a waiting screen
+- Add a celery task queue for article generation so that users don't have to have the page hang while the articles are generated
 - Use Bootstrap and CSS to make it cleaner
 
 
