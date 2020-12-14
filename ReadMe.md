@@ -11,11 +11,19 @@ Stack:
 - HuggingFace
 - NewsPaper3k
 
+## Run the app:
+Run the bash file `start_up.sh` on an EC2 instance and then access the web app over your browser.
+
 ## HuggingFace
 The important ML models for this repo are taken from HuggingFace's transformers library.
 The models that showed the best performance were Google Pegasus and DistilBart both trained on 
 the CNN-Dailymail dataset. Many other Pegasus, T5 and other ML models were tested and are still 
-available within the 
+available within the repo (flask-app/outpost/hf_summarizer.py). 
+
+More abstractive summarization models like GPT and Pegasus Multi-news were also tested but showed
+poor results. They struggled to properly cite quotes and would get easily confused about facts like
+who the current president is. This is likely due to the datasets containing articles from a different
+time period which would train it to learn that Obama was president for example instead of Trump.
 
 ## NewsPaper3k
 Used for websraping and pulling the articles from a link
@@ -40,6 +48,7 @@ EC2 and then use boto3 calls to the Batch cluster)
 similar articles based off of keywords)
 - Use Flask-login to make user access more secure
 - Store previously generated articles in a db
+- Scrape newstitles daily or in the background so that users don't have to wait for updates
 - release the summarization python code as a pip package
 - Release the whole api to AWS Marketplace as a base image
 - Accept both text and links as input

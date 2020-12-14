@@ -196,13 +196,3 @@ def clean_text(text):
             new_text += char
 
     return new_text
-
-
-if __name__ == '__main__':
-
-    a = "Tump poop said this shit Trump said this shit really random sasdfkjasd; and then went to the park Trump didn't say this"
-    b = 'said this shit and then went to the park'
-
-    print(new_text_checker(new_text=a, orig_text=b))
-
-
