@@ -1,6 +1,6 @@
-# Outpost API
+# Newsletter
 
-Use Machine Learning to automatically generate news articles in an easy to use web app.
+Use Machine Learning to automatically generate news letters in an easy to use web app.
 
 Stack: 
 - Flask
