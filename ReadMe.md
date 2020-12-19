@@ -18,7 +18,7 @@ Run the bash file `start_up.sh` on an EC2 instance and then access the web app o
 The important ML models for this repo are taken from HuggingFace's transformers library.
 The models that showed the best performance were Google Pegasus and DistilBart both trained on 
 the CNN-Dailymail dataset. Many other Pegasus, T5 and other ML models were tested and are still 
-available within the repo (flask-app/outpost/hf_summarizer.py). 
+available within the repo (flask-app/newsletter/hf_summarizer.py). 
 
 More abstractive summarization models like GPT and Pegasus Multi-news were also tested but showed
 poor results. They struggled to properly cite quotes and would get easily confused about facts like

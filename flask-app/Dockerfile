@@ -6,7 +6,7 @@ RUN pip3 install --upgrade pip
 RUN apt-get install gunicorn3 -y
 
 COPY requirements.txt requirements.txt
-COPY outpost /opt/
+COPY newsletter /opt/
 COPY models_download.py models_download.py
 
 

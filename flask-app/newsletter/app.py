@@ -1,13 +1,10 @@
 from flask import (
     Flask,
-    g,
-    redirect,
     render_template,
-    request,
-    session,
-    url_for
+    request
 )
 from flask_bootstrap import Bootstrap
+from celery import Celery
 import time
 
 from hf_summarizer import pegasus_summarization, chunk_bart
@@ -18,8 +15,15 @@ from sentiment_analysis import hf_topn_sentiment
 
 # Initialize App
 app = Flask(__name__)
-app.secret_key = 'supersecretkeythatissolongthatnohackerwouldtryit'  # TODO should be os.getenv()
 Bootstrap(app)
+
+# Celery configuration
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
+# Initialize Celery
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 VERSION = 'v0.1.6'
 
@@ -28,56 +32,12 @@ def generate_header():
 
     # need to set what you want to 'class="active"'
     header = f'<div class="jumbotron text-center"><div class="container">' \
-             f'<h2>The Outpost News Article Analysis Tool {VERSION}</h2></div></div>'
+             f'<h2>Newsletter {VERSION}</h2></div></div>'
     return header
-
-
-class User:
-    def __init__(self, id, username, password):
-        self.id = id
-        self.username = username
-        self.password = password
-
-    def __repr__(self):
-        return f'<User: {self.username}>'
-
-users = []
-users.append(User(id=1, username='jack', password='fixthislater'))  # TODO should be os.getenv()
-users.append(User(id=2, username='tim', password='terriblyinsecure'))  # TODO should be os.getenv()
-users.append(User(id=2, username='annie', password='awfulpractice'))  # TODO should be os.getenv()
-
-@app.before_request
-def before_request():
-    g.user = None
-
-    if 'user_id' in session:
-        user = [x for x in users if x.id == session['user_id']][0]
-        g.user = user
-
-
-@app.route('/', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        session.pop('user_id', None)
-
-        username = request.form['username']
-        username = username.lower()
-        password = request.form['password']
-
-        user = [x for x in users if x.username == username][0]
-        if user and user.password == password:
-            session['user_id'] = user.id
-            return redirect(url_for('article_generation'))
-
-        return redirect(url_for('login'))
-
-    return render_template('login.html')
 
 
 @app.route('/generated_articles', methods=['GET', 'POST'])
 def output_article_generation():
-    if not g.user:
-        return redirect(url_for('login'))
     header = generate_header()
     if request.method == 'POST':
 
@@ -211,8 +171,6 @@ def article_generator(articles, num_sentences=7, article_type='Central'):
 
 @app.route('/article_generation')
 def article_generation():
-    if not g.user:
-        return redirect(url_for('login'))
     header = generate_header()
     return render_template('multi_article.html', header=header)
 
