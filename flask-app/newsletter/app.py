@@ -36,50 +36,64 @@ def generate_header():
     return header
 
 
+@celery.task(bind=True)
+def backgroud_article_generation(self, input_data):
+
+
+    self.update_state(state='PROGRESS',
+                      meta={'article': i, 'total': total,
+                      'status': message})
+
+    """
+    render_template('multi_analyze.html', header=header, total_time=total_time, center_html=center_html,
+                           right_and_left_html=right_and_left_html
+                           )
+    
+    """
+
+    return {'article': 100, 'total': 100, 'status': 'Task completed!',
+            'result': 42}
+
+
 @app.route('/generated_articles', methods=['GET', 'POST'])
 def output_article_generation():
     header = generate_header()
     if request.method == 'POST':
 
+        # task = backgroud_article_generation.apply_async(input_data=request.form)
+        input_data = request.form
         a = time.time()
 
-        orig_text = {}
-        left_articles = []
-        right_articles = []
-        center_articles = []
+        articles = []
 
         print('Pull Articles')
-        # get right and left articles, summaries
-        for s in ['l', 'r', 'c']:
-            if s == 'c':
-                length = 2
-            else:
-                length = 5
-            for i in range(length):
+        # get articles
+        for article_index in range():
 
-                orig_text[f'{s}_link{i+1}'] = request.form[f'{s}_link{i+1}']
-                # if a link is given use newsarticle3k else parse the given text
-                if orig_text[f'{s}_link{i+1}']:
-                    try:
-                        article = return_single_article(orig_text[f'{s}_link{i+1}'], output_type='string')
-                    except:
-                        source = source_from_url(orig_text[f'{s}_link{i+1}'])
-                        article = {'source': source, 'article': "Unable to pull article from this source"}
-                        print("Failed to pull article from", source)
+            orig_text[f'{s}_link{i + 1}'] = input_data[f'{s}_link{i + 1}']
+            # if a link is given use newsarticle3k else parse the given text
+            if orig_text[f'{s}_link{i + 1}']:
+                try:
+                    article = return_single_article(orig_text[f'{s}_link{i + 1}'], output_type='string')
+                except:
+                    source = source_from_url(orig_text[f'{s}_link{i + 1}'])
+                    article = {'source': source, 'article': "Unable to pull article from this source"}
+                    print("Failed to pull article from", source)
 
-                    print(f'Pulled from: {article["source"]}')
-                    if s == 'l':
-                        left_articles.append(article)
-                    if s == 'r':
-                        right_articles.append(article)
-                    if s == 'c':
-                        center_articles.append(article)
+                print(f'Pulled from: {article["source"]}')
+                if s == 'l':
+                    left_articles.append(article)
+                if s == 'r':
+                    right_articles.append(article)
+                if s == 'c':
+                    center_articles.append(article)
 
         num_sentences = 6
 
         right_summaries = article_generator(articles=right_articles, num_sentences=num_sentences, article_type='Right')
         left_summaries = article_generator(articles=left_articles, num_sentences=num_sentences, article_type='Left')
-        center_summaries = article_generator(articles=center_articles, num_sentences=num_sentences, article_type='Center')
+        center_summaries = article_generator(articles=center_articles, num_sentences=num_sentences,
+                                             article_type='Center')
 
         center_html = ''
         for i in range(len(center_summaries)):
@@ -90,8 +104,8 @@ def output_article_generation():
         max_articles = max(len(right_summaries), len(left_summaries))
         for i in range(max_articles):
 
-            right_and_left_html += f'<tr><th style="text-align:center"><p style="font-size:20px">Left Article {i+1}</p></th>' \
-                f'<th style="text-align:center"><p style="font-size:20px">Right Article {i+1}</p></th></tr>'
+            right_and_left_html += f'<tr><th style="text-align:center"><p style="font-size:20px">Left Article {i + 1}</p></th>' \
+                f'<th style="text-align:center"><p style="font-size:20px">Right Article {i + 1}</p></th></tr>'
 
             right_and_left_html += '<tr><td><p>'
 
@@ -113,7 +127,7 @@ def output_article_generation():
 
         b = time.time()
 
-        total_time = (b-a)/60
+        total_time = (b - a) / 60
 
     return render_template('multi_analyze.html', header=header, total_time=total_time, center_html=center_html,
                            right_and_left_html=right_and_left_html

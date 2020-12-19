@@ -2,6 +2,8 @@
 
 Use Machine Learning to automatically generate news letters in an easy to use web app.
 
+An example of a newsletter generated from this app can be found [here](https://www.outpost-news.com/2020/11/25/affirmative-action-what-do-the-left-and-right-think/).
+
 Stack: 
 - Flask
 - Docker
@@ -45,6 +47,7 @@ so that article generation doesn't take too long. This would be expensive to lea
 only use it a couple times a day. Offloading the computation to an AWS Batch autoscaling group with 
 a minimum size of 0 would be much more cost effective (Do scraping and kick of jobs from a small
 EC2 and then use boto3 calls to the Batch cluster)
+- Alternative to the above: could investigate the new container support in lambda
 - NewsAPI to pull articles and find trending topics (super expensive though)
 - Auto generate articles based off of trending topics (Get trending news articles and then pull 
 similar articles based off of keywords)

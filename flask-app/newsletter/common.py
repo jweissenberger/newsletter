@@ -8,10 +8,10 @@ def sentence_tokenizer(text):
     :return: list of sentences
     """
     text = text.replace('*', '')
-    text = text.replace('-', '')
     text = text.replace('#', '')
 
     # keep quotes together
+    # (previously it would break up sentences within quotes which would create choppy summaries, this prevents that)
     in_quote = False
     new_text = ''
     for char in text:
@@ -41,18 +41,9 @@ def sentence_tokenizer(text):
 
 
 def capitalization_fix(text):
-    # sentence tokenizer
-    # first word of every sentence capitalize
-    words_to_replace = {
-        'biden': 'Biden',
-        'trump': 'Trump',
-        'u.s.': 'U.S.',
-        'harris': 'Harris',
-        'united states': 'United States',
-        'america': 'America'
-    }
-    # for word
-    return text
+    # Thought I might need this to clean up the output from the models but don't think I need it
+    # look at the pip package truecase if this is needed in the future
+    raise NotImplementedError()
 
 
 def plagiarism_checker(new_text, orig_text):
@@ -121,8 +112,8 @@ def new_text_checker(new_text, orig_text):
     Given new text and old text, puts any new words (those not directly quoted in brackets)
 
     ex:
+    orig_text = 'He said, "Build the wall"'
     new_text = 'Trump said, "Build the wall"'
-    orig_text = '...said, "Build the wall"...'
 
     would return -> '[Trump] said, "Build the wall"'
 
@@ -188,7 +179,8 @@ def clean_text(text):
 
     text = text.replace('&', 'and')
 
-    allowed_symbols = ['"', "'", ' ', '$', ':', '.', '?', '!', '(', ')', '/', ';']  # should be set for quicker check
+    allowed_symbols = ['"', "'", ' ', '$', ':', '.', '?', '!', '(', ')', '/', ';']
+    allowed_symbols = set(allowed_symbols)  # allow for quicker check even though this it will only save like 5 operations but would scale better
 
     new_text = ""
     for char in text:
