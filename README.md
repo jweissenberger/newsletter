@@ -1,6 +1,6 @@
 # Newsletter
 
-Use Machine Learning to automatically generate news letters in an easy to use web app.
+Using Machine Learning to automatically generate newsletters and blog posts in an easy to use web app.
 
 An example of a newsletter generated from this app can be found [here](https://www.outpost-news.com/2020/11/25/affirmative-action-what-do-the-left-and-right-think/).
 
@@ -14,7 +14,19 @@ Stack:
 - NewsPaper3k
 
 ## Run the app:
-Run the bash file `start_up.sh` on an EC2 instance and then access the web app over your browser.
+Cloud:<br>
+Run the bash file `start_up.sh` on an AWS EC2 instance and then access the web app over your browser.
+
+Locally:<br>
+Flask and Python way(quickest): Install the requirements in a new environment: `cd flask-app; pip install -r requirements.txt`<br>
+Then in `newsletter/flask-app/newsletter` run `python local_app.py`
+
+** When you run the app this way, it won't use a task queue and therefore won't display its 
+progress in writing the newsletter. So the app will hang for 1-10 minutes depending on how many 
+articles you pass in and the power of your computer and then return a page with the newsletter. **
+
+Docker way: install docker and docker compose and run `docker-compose up`
+
 
 ## HuggingFace
 The important ML models for this repo are taken from HuggingFace's transformers library.
