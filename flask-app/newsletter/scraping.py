@@ -97,6 +97,7 @@ def search_for_term(terms):
 
     return output_articles
 
+
 def return_single_article(link, output_type='string'):
     """
 
@@ -149,12 +150,8 @@ def return_single_article(link, output_type='string'):
 
     results = f'{source}:{new_line}{article.title}{new_line}{by_line}{new_line}{article.text}'
 
-    article.nlp()
-    summary = f'{source}:{new_line}{article.title}{new_line}{by_line}{new_line}{article.summary}'
-
     output['cleaned_article'] = results
     output['article'] = article.text
-    output['summary'] = summary
     output['title'] = article.title
     output['authors'] = by_line
     output['source'] = source

@@ -27,6 +27,24 @@ def generate_header():
     return header
 
 
+@app.route('/')
+def test():
+    return render_template('article_input.html')
+
+
+@app.route('/output')
+def output():
+
+    articles = [{'source': 'CNN', 'authors': 'Mr Author', 'title': 'Trump did a thing',
+                 'pegasus': 'pegasus summary', 'bart': 'bart summary', 'tfidf': 'tfidf summary',
+                 'word_frequency': 'wf summary', 'positive_sentences': ['postive sentence'],
+                 'negative_sentences':['negative sentences']}
+                ]
+    return render_template('article_output.html', articles=articles)
+
+
+
+
 @app.route('/generated_articles', methods=['GET', 'POST'])
 def output_article_generation():
     header = generate_header()
@@ -40,15 +58,15 @@ def output_article_generation():
 
         print('Pull Articles')
         # get articles
-        for article_index in range(8):
+        for article_index in range(5):
 
             # if a link is given use newsarticle3k else parse the given text
-            if input_data[f'link{i}']:
+            if input_data[f'link{article_index}']:
                 try:
                     # TODO: check if its a link or just text
-                    article = return_single_article(input_data[f'link{i}'], output_type='string')
+                    article = return_single_article(input_data[f'link{article_index}'], output_type='string')
                 except:
-                    source = source_from_url(input_data[f'link{i}'])
+                    source = source_from_url(input_data[f'link{article_index}'])
                     article = {'source': source, 'article': "Unable to pull article from this source"}
                     print("Failed to pull article from", source)
 
@@ -59,43 +77,11 @@ def output_article_generation():
 
         summaries = article_generator(articles=articles, num_sentences=num_sentences)
 
-        center_html = ''
-        for i in range(len(center_summaries)):
-            center_html += center_summaries[i] + "<br><br>"
-
-        right_and_left_html = '<table style="margin-left:auto;margin-right:auto;">'
-
-        max_articles = max(len(right_summaries), len(left_summaries))
-        for i in range(max_articles):
-
-            right_and_left_html += f'<tr><th style="text-align:center"><p style="font-size:20px">Left Article {i + 1}</p></th>' \
-                f'<th style="text-align:center"><p style="font-size:20px">Right Article {i + 1}</p></th></tr>'
-
-            right_and_left_html += '<tr><td><p>'
-
-            if left_summaries and i < len(left_summaries):
-                right_and_left_html += left_summaries[i]
-            else:
-                right_and_left_html += ' '
-
-            right_and_left_html += '</p></td><td><p>'
-
-            if right_summaries and i < len(right_summaries):
-                right_and_left_html += right_summaries[i]
-            else:
-                right_and_left_html += ' '
-
-            right_and_left_html += '</p></td></tr>'
-
-        right_and_left_html += '</table>'
-
         b = time.time()
 
         total_time = (b - a) / 60
 
-    return render_template('multi_analyze.html', header=header, total_time=total_time, center_html=center_html,
-                           right_and_left_html=right_and_left_html
-                           )
+    return render_template('multi_analyze.html', header=header, total_time=total_time, summaries=summaries)
 
 
 def article_generator(articles, num_sentences=7):
@@ -113,34 +99,28 @@ def article_generator(articles, num_sentences=7):
             summaries.append("Failed to pull article :( ")
             continue
 
+        article = value
+
         print(value['source'], 'Pegasus Summary')
         summ = pegasus_summarization(text=value['article'], model_name='google/pegasus-cnn_dailymail')
-
-        summaries.append(f"<b>{value['source']}</b>:<br><br>"
-                         f"Link: {value['url']}<br><br>"
-                         f"Author(s): {value['authors']}<br><br>"
-                         f"{new_text_checker(new_text=summ, orig_text=value['article'])}<br><br>"
-                         )
+        article['pegasus'] = new_text_checker(new_text=summ, orig_text=value['article'])
 
         print(value['source'], 'Bart Summary')
         summ = chunk_bart(value['article'])
-        summaries[-1] += new_text_checker(new_text=summ, orig_text=value['article']) + '<br><br>'
+        article['bart'] = new_text_checker(new_text=summ, orig_text=value['article'])
 
         print(value['source'], 'TF IDF')
-        summaries[-1] += f"{run_tf_idf_summarization(value['article'], num_sentences)}<br><br>"
+        article['tfidf'] = run_tf_idf_summarization(value['article'], num_sentences)
 
         print(value['source'], 'Word Frequency')
-        summaries[-1] += run_word_frequency_summarization(value['article'], num_sentences) + '<br><br>'
+        article['word_frequency'] = run_word_frequency_summarization(value['article'], num_sentences)
 
         print(value['source'], 'Sentiment Analysis')
         top_positive, top_negative = hf_topn_sentiment(value['article'])
-        summaries[-1] += "Most Positive Sentences:<br>"
-        for i in top_positive:
-            summaries[-1] += i[1] + "<br>"
+        article['positive_sentences'] = top_positive
+        article['negative_sentences'] = top_negative
 
-        summaries[-1] += "<br><br>Most Negative Sentences:<br>"
-        for i in top_negative:
-            summaries[-1] += i[1] + "<br>"
+        summaries.append(article)
 
     return summaries
 

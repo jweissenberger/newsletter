@@ -27,6 +27,8 @@ celery.conf.update(app.config)
 
 VERSION = 'v0.1.6'
 
+# TODO add login functionality like you had previously but have it be taken in by environment variables
+
 
 def generate_header():
 

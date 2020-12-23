@@ -1,0 +1,36 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+
+<div class="text-center">
+  <img src="../static/images/logo.png">
+
+</div>
+
+<div class=container">
+    <div class="col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-xs-12">
+
+      <form  action="" method="post" role="form">
+        <div class="form-group">
+
+          <input type="text" class="form-control" id="link0" name="link0" placeholder="Article 1">
+          <br>
+          <input type="text" class="form-control" id="link1" name="link1" placeholder="Article 2">
+          <br>
+          <input type="text" class="form-control" id="link2" name="link2" placeholder="Article 3">
+	      <br>
+          <input type="text" class="form-control" id="link3" name="link3" placeholder="Article 4">
+          <br>
+          <input type="text" class="form-control" id="link4" name="link4" placeholder="Article 5">
+
+	    </div>
+        <br>
+
+        <center>
+          <button type="submit" class="btn btn-success">Submit</button>
+        </center>
+      </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -32,7 +32,14 @@ def hf_sentence_by_sentence_sentiment_analysis(text):
     return positive_sentences, negative_sentences
 
 
-def hf_topn_sentiment(text, num_sentences=3):
+def hf_topn_sentiment(text, num_sentences=2):
+    # check to make sure there's enough sentences
+    sentences = len(sentence_tokenizer(text))
+    if sentences < num_sentences*2:
+        if sentences < 2:
+            return ["Not enough Sentences"], ["Not enough Sentences"]
+        num_sentences = 1
+
     pos_sentences, neg_sentences = hf_sentence_by_sentence_sentiment_analysis(text)
 
     top_positive = pos_sentences[-num_sentences:]
