@@ -1,0 +1,67 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
+
+<div class="text-center">
+  <img src="../static/images/logo.png">
+
+</div>
+
+<div class=container">
+    <div class="col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-xs-12">
+
+      <form  action="" method="post" role="form">
+        <div class="form-group">
+
+          <input type="text" class="form-control" id="link0" name="link0" placeholder="Article 1">
+          <br>
+          <input type="text" class="form-control" id="link1" name="link1" placeholder="Article 2">
+          <br>
+          <input type="text" class="form-control" id="link2" name="link2" placeholder="Article 3">
+	      <br>
+          <input type="text" class="form-control" id="link3" name="link3" placeholder="Article 4">
+          <br>
+          <input type="text" class="form-control" id="link4" name="link4" placeholder="Article 5">
+
+	    </div>
+        <br>
+
+        <center>
+          <button type="submit" class="btn btn-success">Submit</button>
+        </center>
+      </form>
+    </div>
+</div>
+
+<br><br><br><br>
+<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+  <ol class="carousel-indicators">
+    <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></li>
+    <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></li>
+    <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></li>
+  </ol>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      {{articles[0]['pegasus']}}
+    </div>
+    <div class="carousel-item">
+      {{articles[0]['bart']}}
+    </div>
+    <div class="carousel-item">
+      {{articles[0]['tfidf']}}
+    </div>
+  </div>
+  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+    <span>Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="false"></span>
+    <span>Next</span>
+  </a>
+</div>
+
+<script src="../static/js/bootstrap.min.js"></script>
+{% endblock %}

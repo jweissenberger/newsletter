@@ -7,7 +7,6 @@ An example of a newsletter generated from this app can be found [here](https://w
 Stack: 
 - Flask
 - Docker
-- Celery
 - Gunicorn
 - Nginx
 - HuggingFace
@@ -19,11 +18,7 @@ Run the bash file `start_up.sh` on an AWS EC2 instance and then access the web a
 
 Locally:<br>
 Flask and Python way(quickest): Install the requirements in a new environment: `cd flask-app; pip install -r requirements.txt`<br>
-Then in `newsletter/flask-app/newsletter` run `python local_app.py`
-
-** When you run the app this way, it won't use a task queue and therefore won't display its 
-progress in writing the newsletter. So the app will hang for 1-10 minutes depending on how many 
-articles you pass in and the power of your computer and then return a page with the newsletter. **
+Then in `newsletter/flask-app/newsletter` run `python app.py`
 
 Docker way: install docker and docker compose and run `docker-compose up`
 
@@ -44,10 +39,11 @@ Used for websraping and pulling the articles from a link
 
 
 ## TODO's
-- Finish scraping to pull from all of the sources
-- Store the scraped results in the flask session so we don't have to pull them more than once (ideally should be stored in a database)
+- Clean up article_output.html
 - Add a loading screen to scraping because each source it pulls from takes about 3 seconds
 - Add a celery task queue for article generation so that users don't have to have the page hang while the articles are generated
+- Task queue example [here](https://blog.miguelgrinberg.com/post/using-celery-with-flask)
+- Celery task queue docker compose example [here](https://nickjanetakis.com/blog/dockerize-a-flask-celery-and-redis-application-with-docker-compose)
 - Set passwords and secrets from environment variables so that they're not hard coded
 - Use Bootstrap and CSS to make it cleaner
 - Base html pages instead of passing in strings
