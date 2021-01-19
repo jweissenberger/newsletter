@@ -31,8 +31,8 @@ available within the repo (flask-app/newsletter/hf_summarizer.py).
 
 More abstractive summarization models like GPT and Pegasus Multi-news were also tested but showed
 poor results. They struggled to properly cite quotes and would get easily confused about facts like
-who the current president is. This is likely due to the datasets containing articles from a different
-time period which would train it to learn that Obama was president for example instead of Trump.
+who the current president is. This is likely due to the datasets that these models were trained on came from a different
+time period, which would train it to learn that Obama was president for example instead of Trump or Biden.
 
 ## NewsPaper3k
 Used for websraping and pulling the articles from a link
