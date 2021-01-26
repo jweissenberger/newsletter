@@ -32,7 +32,8 @@ Locally:<br>
 Flask and Python way(quickest): Install the requirements in a new environment: `cd flask-app; pip install -r requirements.txt; python models_download.py`<br>
 Then in `newsletter/flask-app/newsletter` run `python app.py`
 
-Docker way: install docker and docker compose and run `docker-compose up` from the main directory
+Docker way: install docker and docker compose. The `export IP=${local ip you want to run it at}`
+and then run `docker-compose up` from the main directory
 
 
 ## HuggingFace
