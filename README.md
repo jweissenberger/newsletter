@@ -1,6 +1,6 @@
 # Newsletter
 
-Using Machine Learning to automatically generate newsletters and blog posts in an easy to use web app.
+Newsletter uses Machine Learning to automatically generate newsletters and blog posts by summarizing articles in an easy to use web app.
 
 Copy and paste a links to news articles you want to summarize:
 
