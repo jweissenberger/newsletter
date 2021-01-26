@@ -1,4 +1,4 @@
-#What Does Biden’s Tax Plan Mean For You?
+# What Does Biden’s Tax Plan Mean For You?
 
 “President-elect Joe Biden would enact a number of policies that would raise taxes on individuals with income above $400,000, including raising individual income, capital gains, and payroll taxes. Biden would also raise taxes on corporations.” – The Tax Foundation
 
