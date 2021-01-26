@@ -29,7 +29,7 @@ Cloud:<br>
 Run the bash file `start_up.sh` on an AWS EC2 instance and then access the web app over your browser.
 
 Locally:<br>
-Flask and Python way(quickest): Install the requirements in a new environment: `cd flask-app; pip install -r requirements.txt`<br>
+Flask and Python way(quickest): Install the requirements in a new environment: `cd flask-app; pip install -r requirements.txt; python models_download.py`<br>
 Then in `newsletter/flask-app/newsletter` run `python app.py`
 
 Docker way: install docker and docker compose and run `docker-compose up` from the main directory
