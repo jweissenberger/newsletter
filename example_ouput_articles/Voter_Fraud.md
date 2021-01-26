@@ -1,4 +1,4 @@
-#Courts Find No Evidence of Voter Fraud in Presidential Election
+# Courts Find No Evidence of Voter Fraud in Presidential Election
 
 “President Donald Trump’s campaign filed a number of lawsuits across six battleground states this month as he tried to upend the 2020 election. Judges uniformly rejected his claims of voter fraud. The latest case ended Saturday, Nov. 21, when a federal judge in Pennsylvania said Trump lawyer Rudy Giuliani presented only ‘speculative accusations’ that brought to mind ‘Frankenstein’s monster’.” – The Associated Press
 
