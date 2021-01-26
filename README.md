@@ -4,11 +4,11 @@ Using Machine Learning to automatically generate newsletters and blog posts in a
 
 Copy and paste a links to news articles you want to summarize:
 
-<center><img src="images/front_page.png" width="200" height="250"></center>
+<div style="text-align:center"><img src="images/front_page.png" width="400" height="500"></div>
 <br>
 
 Newsletter will then scrape the content and use state of the art summarization algorithms and sentiment analysis to create your newsletter or blog post.
-<center><img src="images/results2.png" width="200" height="300"></center>
+<div style="text-align:center"><img src="images/results2.png" width="400" height="600"></div>
 <br>
 
 
