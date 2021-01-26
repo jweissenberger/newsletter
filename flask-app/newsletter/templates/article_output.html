@@ -31,37 +31,26 @@
           <button type="submit" class="btn btn-success">Submit</button>
         </center>
       </form>
+
+      <br><br><br>
+
+      {% for article in summaries %}
+          <p><b>Source: </b>{{ article['source'] }}</p>
+          {% if article['pegasus'] %}
+            <p><b>Title: </b>{{ article['title'] }}</p>
+            <p><b>Author(s): </b>{{ article['authors'] }}</p>
+            <p><b>Pegasus Summary: </b>{{ article['pegasus'] }}</p>
+            <p><b>Bart Summary: </b>{{ article['bart'] }}</p>
+            <p><b>TFIDF Summary: </b>{{ article['tfidf'] }}</p>
+            <p><b>Word Frequency Summary:</b>{{ article['word_frequency'] }}</p>
+            <p><b>Positive Sentences: </b>{{ article['positive_sentences'] }}</p>
+            <p><b>Negative Sentences: </b>{{ article['negative_sentences'] }}</p>
+            <br><br>
+          {% endif %}
+      {% endfor %}
     </div>
 </div>
 
-<br><br><br><br>
-<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
-<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-  <ol class="carousel-indicators">
-    <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></li>
-    <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></li>
-    <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></li>
-  </ol>
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      {{articles[0]['pegasus']}}
-    </div>
-    <div class="carousel-item">
-      {{articles[0]['bart']}}
-    </div>
-    <div class="carousel-item">
-      {{articles[0]['tfidf']}}
-    </div>
-  </div>
-  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="false"></span>
-    <span>Previous</span>
-  </a>
-  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="false"></span>
-    <span>Next</span>
-  </a>
-</div>
 
-<script src="../static/js/bootstrap.min.js"></script>
+
 {% endblock %}

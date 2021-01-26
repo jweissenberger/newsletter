@@ -2,7 +2,19 @@
 
 Using Machine Learning to automatically generate newsletters and blog posts in an easy to use web app.
 
-An example of a newsletter generated from this app can be found [here](https://www.outpost-news.com/2020/11/25/affirmative-action-what-do-the-left-and-right-think/).
+Copy and paste a links to news articles you want to summarize:
+
+<center><img src="images/front_page.png" width="200" height="250"></center>
+<br>
+
+Newsletter will then scrape the content and use state of the art summarization algorithms and sentiment analysis to create your newsletter or blog post.
+<center><img src="images/results2.png" width="200" height="300"></center>
+<br>
+
+
+Example of newsletters generated from this app can be found [here](https://github.com/jweissenberger/newsletter/tree/master/example_ouput_articles).
+
+This repo is far from perfect but it was able to create some pretty interesting articles that are entirely computer generated.
 
 Stack: 
 - Flask
@@ -12,7 +24,7 @@ Stack:
 - HuggingFace
 - NewsPaper3k
 
-## Run the app:
+## How to run the app:
 Cloud:<br>
 Run the bash file `start_up.sh` on an AWS EC2 instance and then access the web app over your browser.
 
@@ -20,7 +32,7 @@ Locally:<br>
 Flask and Python way(quickest): Install the requirements in a new environment: `cd flask-app; pip install -r requirements.txt`<br>
 Then in `newsletter/flask-app/newsletter` run `python app.py`
 
-Docker way: install docker and docker compose and run `docker-compose up`
+Docker way: install docker and docker compose and run `docker-compose up` from the main directory
 
 
 ## HuggingFace

@@ -4,7 +4,6 @@ from flask import (
     request
 )
 from flask_bootstrap import Bootstrap
-import time
 
 from hf_summarizer import pegasus_summarization, chunk_bart
 from common import new_text_checker
@@ -18,20 +17,8 @@ Bootstrap(app)
 
 
 @app.route('/')
-def test():
+def front_page():
     return render_template('article_input.html')
-
-
-@app.route('/output')
-def output():
-
-    articles = [{'source': 'CNN', 'authors': 'Mr Author', 'title': 'Trump did a thing',
-                 'pegasus': 'pegasus summary', 'bart': 'bart summary', 'tfidf': 'tfidf summary',
-                 'word_frequency': 'wf summary', 'positive_sentences': ['positive sentence'],
-                 'negative_sentences':['negative sentences']}
-                ]
-    return render_template('article_output.html', articles=articles)
-
 
 
 
@@ -42,7 +29,6 @@ def output_article_generation():
 
         # task = backgroud_article_generation.apply_async(input_data=request.form)
         input_data = request.form
-        a = time.time()
 
         articles = []
 
@@ -67,11 +53,7 @@ def output_article_generation():
 
         summaries = article_generator(articles=articles, num_sentences=num_sentences)
 
-        b = time.time()
-
-        total_time = (b - a) / 60
-
-    return render_template('multi_analyze.html', total_time=total_time, summaries=summaries)
+    return render_template('article_output.html', summaries=summaries)
 
 
 def article_generator(articles, num_sentences=7):
@@ -113,11 +95,6 @@ def article_generator(articles, num_sentences=7):
         summaries.append(article)
 
     return summaries
-
-
-@app.route('/article_generation')
-def article_generation():
-    return render_template('multi_article.html')
 
 
 if __name__ == '__main__':
