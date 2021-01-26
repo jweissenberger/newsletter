@@ -38,8 +38,8 @@ Docker way: install docker and docker compose and run `docker-compose up` from t
 ## HuggingFace
 The important ML models for this repo are taken from HuggingFace's transformers library.
 The models that showed the best performance were Google Pegasus and DistilBart both trained on 
-the CNN-Dailymail dataset. Many other Pegasus, T5 and other ML models were tested and are still 
-available within the repo (flask-app/newsletter/hf_summarizer.py). 
+the CNN-Dailymail dataset. Many other models such as T5, Pegasus trained on other datasets and 
+other ML models were tested and are still available within the repo (flask-app/newsletter/hf_summarizer.py). 
 
 More abstractive summarization models like GPT and Pegasus Multi-news were also tested but showed
 poor results. They struggled to properly cite quotes and would get easily confused about facts like
