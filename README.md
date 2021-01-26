@@ -16,7 +16,7 @@ Example of newsletters generated from this app can be found [here](https://githu
 
 This repo is far from perfect but it was able to create some pretty interesting articles that are entirely computer generated.
 
-Stack: 
+## Stack: 
 - Flask
 - Docker
 - Gunicorn
@@ -51,14 +51,12 @@ Used for websraping and pulling the articles from a link
 
 
 ## TODO's
-- Clean up article_output.html
-- Add a loading screen to scraping because each source it pulls from takes about 3 seconds
+- Add a loading screen
 - Add a celery task queue for article generation so that users don't have to have the page hang while the articles are generated
 - Task queue example [here](https://blog.miguelgrinberg.com/post/using-celery-with-flask)
 - Celery task queue docker compose example [here](https://nickjanetakis.com/blog/dockerize-a-flask-celery-and-redis-application-with-docker-compose)
 - Set passwords and secrets from environment variables so that they're not hard coded
-- Use Bootstrap and CSS to make it cleaner
-- Base html pages instead of passing in strings
+- Use more Bootstrap and CSS to make it cleaner
 
 
 ## Future improvements:
