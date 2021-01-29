@@ -61,6 +61,7 @@ Used for websraping and pulling the articles from a link
 
 
 ## Future improvements:
+- Could use socket io to get live results as the jobs finish so that there is no loading screen
 - Because the NLP models are so large its recommended that a large/GPU AWS EC2 Instance is used
 so that article generation doesn't take too long. This would be expensive to leave running if you
 only use it a couple times a day. Offloading the computation to an AWS Batch autoscaling group with 
